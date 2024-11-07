@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CardScreen extends StatelessWidget {
   String url;
   String title;
@@ -17,12 +16,12 @@ class CardScreen extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(children: [
-        Image.network(this.url),
+        Image.network(url),
         const SizedBox(
           height: 8,
         ),
         Text(
-          this.title,
+          title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
@@ -33,11 +32,11 @@ class CardScreen extends StatelessWidget {
         const SizedBox(
           height: 2,
         ),
-        if (this.body != null)
+        if (body != null)
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Text(
-              this.body ?? '',
+              body ?? '',
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.justify,

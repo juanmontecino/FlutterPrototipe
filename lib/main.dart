@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_guide_2024/helpers/preferences.dart';
 import 'package:flutter_guide_2024/providers/theme_provider.dart';
+import 'package:flutter_guide_2024/screens/libros_list_screen.dart';
 import 'package:flutter_guide_2024/screens/screens.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
               BottomNavigationProvider(),
           'profile': (context) => ProfileScreen(),
           // 'custom_list_item': (context) => CustomListItem(),
+          'libros_list': (context) => const LibrosNavigationProvider(),
         }
         /* home: DesignScreen(), */
         );

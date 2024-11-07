@@ -12,7 +12,7 @@ class _MyFormScreenState extends State<FormScreen> {
   final TextEditingController _textFieldController = TextEditingController();
   bool _isSwitchOn = false;
   bool _isChecked = false;
-  String _imagePath =
+  final String _imagePath =
       'https://images.unsplash.com/photo-1444927714506-8492d94b4e3d?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; // URL de la imagen principal
 
   @override

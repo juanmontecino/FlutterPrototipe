@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CreateContainer extends StatelessWidget {
   double height;
   double width;
@@ -22,12 +23,12 @@ class CreateContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      width: this.width,
-      height: this.height,
-      padding: this.padding,
-      margin: this.margin,
+      width: width,
+      height: height,
+      padding: padding,
+      margin: margin,
       decoration: BoxDecoration(
-          color: this.cajaColor, borderRadius: BorderRadius.circular(10)),
+          color: cajaColor, borderRadius: BorderRadius.circular(10)),
       child: child,
     );
   }

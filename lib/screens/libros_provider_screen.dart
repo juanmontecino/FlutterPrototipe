@@ -15,15 +15,15 @@ class DemoProviderScreen extends StatelessWidget {
           elevation: 10,
           toolbarHeight: 80,
         ),
-        bottomNavigationBar: const ControlNavigation(),
+        bottomNavigationBar: const LibrosControlNavigation(),
         body: const ElementsBody(),
       ),
     );
   }
 }
 
-class ControlNavigation extends StatelessWidget {
-  const ControlNavigation({super.key});
+class LibrosControlNavigation extends StatelessWidget {
+  const LibrosControlNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +49,14 @@ class ControlNavigation extends StatelessWidget {
             activeIcon: Icon(Icons.qr_code_2_outlined),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.qr_code),
-              label: 'Q3',
-              activeIcon: Icon(Icons.qr_code_2_outlined),
-              tooltip: 'Boton 3'),
+            icon: Icon(Icons.qr_code),
+            label: 'Q3',
+            activeIcon: Icon(Icons.qr_code_2_outlined),
+            tooltip: 'Boton 3',
+          ),
         ]);
   }
 }
-
 class ElementsBody extends StatelessWidget {
   const ElementsBody({
     Key? key,
