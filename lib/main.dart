@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
           'provider_navigation_bar_provider': (context) =>
               BottomNavigationProvider(),
           'profile': (context) => ProfileScreen(),
-          // 'custom_list_item': (context) => CustomListItem(),
         }
         /* home: DesignScreen(), */
         );
