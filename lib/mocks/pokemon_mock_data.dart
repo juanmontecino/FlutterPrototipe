@@ -35,5 +35,4 @@ final List<Pokemon> pokemonMockData = [
     imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
     species: Species(name: "squirtle", url: "https://pokeapi.co/api/v2/pokemon-species/7/"),
   ),
-  // Puedes agregar más Pokémon según sea necesario
 ];
