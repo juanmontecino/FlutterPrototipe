@@ -41,7 +41,7 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
         body: Stack(
           children: [
             Positioned(
-              top: 40,
+              top: 20,
               left: 1,
               child: IconButton(
                   icon: Icon(
@@ -56,7 +56,7 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
 
             //TEXTO TITULO
             Positioned(
-              top: 90,
+              top: 70,
               left: 20,
               child: Text(pokemon.name,
                   style: TextStyle(
@@ -67,7 +67,7 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
 
             //TIPO DE POKEMON
             Positioned(
-              top: 140,
+              top: 120,
               left: 20,
               child: Container(
                 padding: const EdgeInsets.all(8.0),
