@@ -5,6 +5,7 @@ class DrawerMenu extends StatelessWidget {
     {'route': 'home', 'title': 'Home', 'subtitle': ''},
     {'route': 'profile', 'title': 'Perfil usuario', 'subtitle': ''},
     {'route': 'provider_navigation_bar_provider', 'title': 'Montecino'},
+    {'route': 'pokemon_list', 'title': 'Mangas', 'subtitle': 'Lista de Pokémon'},
   ];
 
   DrawerMenu({super.key});

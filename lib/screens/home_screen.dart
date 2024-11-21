@@ -17,7 +17,6 @@ class HomeScreen extends StatelessWidget {
       ),
       drawer: DrawerMenu(),
       body: const Center(child: Text('Hola mundo')),
-      
     );
   }
 }

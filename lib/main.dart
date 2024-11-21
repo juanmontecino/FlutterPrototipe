@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
           'provider_navigation_bar_provider': (context) =>
               BottomNavigationProvider(),
           'profile': (context) => ProfileScreen(),
+          'pokemon_list': (context) => ListadoScreen(), 
+          'pokemon_detail': (context) => PokemonDetailScreen(),
         }
         /* home: DesignScreen(), */
         );
