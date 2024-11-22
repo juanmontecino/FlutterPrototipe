@@ -35,8 +35,7 @@ class MyApp extends StatelessWidget {
         theme: tema.temaActual,
         routes: {
           'home': (context) => const HomeScreen(),
-          'provider_navigation_bar_provider': (context) =>
-              NewsScreen(),
+          'news': (context) => NewsScreen(),
           'profile': (context) => ProfileScreen(),
           'pokemon_list': (context) => ListadoScreen(), 
           'pokemon_detail': (context) => PokemonDetailScreen(),

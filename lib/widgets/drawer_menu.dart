@@ -4,7 +4,7 @@ class DrawerMenu extends StatelessWidget {
   final List<Map<String, String>> _menuItems = <Map<String, String>>[
     {'route': 'home', 'title': 'Home', 'subtitle': ''},
     {'route': 'profile', 'title': 'Perfil usuario', 'subtitle': ''},
-    {'route': 'provider_navigation_bar_provider', 'title': 'Montecino'},
+    {'route': 'news', 'title': 'Montecino', 'subtitle': 'Noticias'},
     {'route': 'pokemon_list', 'title': 'Mangas', 'subtitle': 'Lista de Pokémon'},
   ];
 
