@@ -124,7 +124,11 @@ Widget _buildNicknameField(Color themeColor) {
         Icons.drive_file_rename_outline,
         color: themeColor, 
       ),
-      floatingLabelStyle: TextStyle(color: Colors.white), // Color del labelText en blanco cuando está enfocado
+      floatingLabelStyle: TextStyle(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white // Si el tema es oscuro, el texto será blanco
+            : Colors.black, // Si el tema es claro, el texto será negro
+      ),
     ),
     validator: (value) {
       if (_isPokemonCaptured && (value == null || value.isEmpty)) {
@@ -153,7 +157,11 @@ Widget _buildNotesField(Color themeColor) {
         Icons.note,
         color: themeColor, 
       ),
-      floatingLabelStyle: TextStyle(color: Colors.white),
+      floatingLabelStyle: TextStyle(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white // Si el tema es oscuro, el texto será blanco
+            : Colors.black, // Si el tema es claro, el texto será negro
+      ),
     ),
     maxLines: 3,
   );
