@@ -21,7 +21,7 @@ class PokemonDetailsView extends StatelessWidget {
           _buildBackButton(context),
           _buildPokemonName(),
           _buildPokemonType(),
-          _buildDetailsContainer(width, height),
+          _buildDetailsContainer(width, height, context),
           _buildPokemonImage(width),
           _buildPokeballBack(height)
         ],
@@ -86,40 +86,48 @@ class PokemonDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsContainer(double width, double height) {
-    return Positioned(
-      bottom: 0,
-      child: Container(
-        width: width,
-        height: height * 0.6,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20),
-          ),
-          color: Colors.white,
+Widget _buildDetailsContainer(double width, double height, BuildContext context) {
+  final theme = Theme.of(context);
+
+  return Positioned(
+    bottom: 0,
+    child: Container(
+      width: width,
+      height: height * 0.6,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(20),
+          topLeft: Radius.circular(20),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              SizedBox(height: 50),
-              _buildDetailRow('Nombre', pokemon.name, width),
-              _buildDetailRow('Altura', '${pokemon.height / 10} m', width),
-              _buildDetailRow('Peso', '${pokemon.weight / 10} kg', width),
-              _buildDetailRow(
-                  'Tipo',
-                  pokemon.types.map((type) => type.type.name).join(", "),
-                  width),
-              _buildDetailRow('Especie', pokemon.species.name, width),
-              _buildDetailRow(
-                  'Numero en Pokedex(ID)', pokemon.id.toString(), width),
-            ],
-          ),
+        color: theme.scaffoldBackgroundColor, 
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            _buildDetailRow('Nombre', pokemon.name, width, context),
+            _buildDetailRow('Altura', '${pokemon.height / 10} m', width, context),
+            _buildDetailRow('Peso', '${pokemon.weight / 10} kg', width, context),
+            _buildDetailRow(
+              'Tipo',
+              pokemon.types.map((type) => type.type.name).join(", "),
+              width,
+              context
+            ),
+            _buildDetailRow('Especie', pokemon.species.name, width, context),
+            _buildDetailRow(
+              'Numero en Pokedex(ID)', 
+              pokemon.id.toString(), 
+              width,
+              context
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPokemonImage(double width) {
     return Positioned(
@@ -133,19 +141,23 @@ class PokemonDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, double width) {
+  Widget _buildDetailRow(String label, String value, double width, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+    padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // Alinea verticalmente al inicio
         children: [
           Container(
-            width: width * 0.3,
+            width: width * 0.4,
             child: Text(label,
-                style: TextStyle(color: Colors.blueGrey, fontSize: 17)),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
+          const SizedBox(width: 20), // Separación fija
           Container(
             child: Text(value,
-                style: TextStyle(color: Colors.black, fontSize: 17)),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
         ],
       ),

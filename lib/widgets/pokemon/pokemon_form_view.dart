@@ -36,12 +36,13 @@ class _PokemonFormViewState extends State<PokemonFormView> {
             children: [
               _buildPokemonImage(),
               SizedBox(height: 20),
-              _buildCaptureSwitch(),
-              _buildShinyCheckbox(),
+              _buildCaptureSwitch(themeColor),
+              SizedBox(height: 10),
+              _buildShinyCheckbox(themeColor),
               SizedBox(height: 20),
-              _buildNicknameField(),
+              _buildNicknameField(themeColor),
               SizedBox(height: 20),
-              _buildNotesField(),
+              _buildNotesField(themeColor),
               SizedBox(height: 20),
               _buildSaveButton(themeColor),
             ],
@@ -60,66 +61,110 @@ class _PokemonFormViewState extends State<PokemonFormView> {
     );
   }
 
-  Widget _buildCaptureSwitch() {
-    return SwitchListTile(
-      title: Text('Capturado'),
-      subtitle: Text('Selecciona si lo capturaste!'),
-      value: _isPokemonCaptured,
-      onChanged: (bool value) {
-        setState(() {
-          _isPokemonCaptured = value;
-        });
-      },
-    );
-  }
-
-  Widget _buildShinyCheckbox() {
-    return CheckboxListTile(
-      title: Text('Versión Shiny'),
-      subtitle: Text('Es su versión Shiny?'),
-      value: _isShiny,
-      onChanged: (bool? value) {
-        setState(() {
-          _isShiny = value ?? false;
-        });
-      },
-    );
-  }
-
-  Widget _buildNicknameField() {
-    return TextFormField(
-      controller: _nicknameController,
-      decoration: InputDecoration(
-        labelText: 'Nickname',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.pets),
+  Widget _buildCaptureSwitch(Color themeColor) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: themeColor,
+          width: 2, 
+        ),
+        borderRadius: BorderRadius.circular(8),
       ),
-      validator: (value) {
-        if (_isPokemonCaptured && (value == null || value.isEmpty)) {
-          return 'Demosle un nombre al Pokemon!';
-        }
-        return null;
-      },
+      child: SwitchListTile(
+        title: Text('Capturado'),
+        subtitle: Text('Selecciona si lo capturaste!'),
+        value: _isPokemonCaptured,
+        onChanged: (bool value) {
+          setState(() {
+            _isPokemonCaptured = value;
+          });
+        },
+      ),
     );
   }
 
-  Widget _buildNotesField() {
-    return TextFormField(
-      controller: _notesController,
-      decoration: InputDecoration(
-        labelText: 'Notas del Entrenador:',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.note),
+
+  Widget _buildShinyCheckbox(Color themeColor) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: themeColor,
+          width: 2, 
+        ),
+        borderRadius: BorderRadius.circular(8),
       ),
-      maxLines: 3,
+      child: CheckboxListTile(
+        title: Text('Versión Shiny'),
+        subtitle: Text('Es su versión Shiny?'),
+        value: _isShiny,
+        onChanged: (bool? value) {
+          setState(() {
+            _isShiny = value ?? false;
+          });
+        },
+      ),
     );
   }
+
+Widget _buildNicknameField(Color themeColor) {
+  return TextFormField(
+    controller: _nicknameController,
+    decoration: InputDecoration(
+      labelText: 'Nickname',
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: themeColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: themeColor), 
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: themeColor),
+      ),
+      prefixIcon: Icon(
+        Icons.drive_file_rename_outline,
+        color: themeColor, 
+      ),
+      floatingLabelStyle: TextStyle(color: Colors.white), // Color del labelText en blanco cuando está enfocado
+    ),
+    validator: (value) {
+      if (_isPokemonCaptured && (value == null || value.isEmpty)) {
+        return 'Demosle un nombre al Pokemon!';
+      }
+      return null;
+    },
+  );
+}
+
+Widget _buildNotesField(Color themeColor) {
+  return TextFormField(
+    controller: _notesController,
+    decoration: InputDecoration(
+      labelText: 'Notas del Entrenador:',
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: themeColor), 
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: themeColor), 
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: themeColor), 
+      ),
+      prefixIcon: Icon(
+        Icons.note,
+        color: themeColor, 
+      ),
+      floatingLabelStyle: TextStyle(color: Colors.white),
+    ),
+    maxLines: 3,
+  );
+}
+
 
   Widget _buildSaveButton(Color themeColor) {
     return Center(
       child: ElevatedButton.icon(
         icon: Icon(Icons.save),
-        label: Text('Guardando notas'),
+        label: Text('Guardar Notas'),
         style: ElevatedButton.styleFrom(
           backgroundColor: themeColor,
           padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
