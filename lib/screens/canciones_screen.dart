@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/canciones_provider.dart';
-import './canciones_detail_screen.dart';
+import '../widgets/cancion_card.dart';
+import '../widgets/cancion_images.dart';
+import '../widgets/cancion_filtro.dart';
 
 class ListaCancionesScreen extends StatefulWidget {
   @override
@@ -24,16 +26,16 @@ class _ListaCancionesScreenState extends State<ListaCancionesScreen> {
   }
 
   void _navegarADetalle(BuildContext context, Map<String, dynamic> cancion) {
-  Navigator.pushNamed(
-    context,
-    'canciones_detalle',
-    arguments: {
-      ...cancion,
-      'esFavorito': _favoritos.contains(cancion),
-      'onToggleFavorito': () => _toggleFavorito(cancion),
-    },
-  );
-}
+    Navigator.pushNamed(
+      context,
+      'canciones_detalle',
+      arguments: {
+        ...cancion,
+        'esFavorito': _favoritos.contains(cancion),
+        'onToggleFavorito': () => _toggleFavorito(cancion),
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +118,7 @@ class _ListaCancionesScreenState extends State<ListaCancionesScreen> {
   }
 }
 
-class _ListaCancionesView extends StatelessWidget {
+class _ListaCancionesView extends StatefulWidget {
   final List<Map<String, dynamic>> canciones;
   final Function(Map<String, dynamic>) onToggleFavorito;
   final Function(Map<String, dynamic>) onTapCancion;
@@ -130,26 +132,84 @@ class _ListaCancionesView extends StatelessWidget {
   });
 
   @override
+  _ListaCancionesViewState createState() => _ListaCancionesViewState();
+}
+
+class _ListaCancionesViewState extends State<_ListaCancionesView> {
+  String searchTerm = '';
+
+  List<Map<String, dynamic>> get filteredCanciones {
+    if (searchTerm.isEmpty) {
+      return widget.canciones;
+    }
+    return widget.canciones.where((cancion) {
+      final title = cancion['titulo']?.toString().toLowerCase() ?? '';
+      final artist = cancion['artista']?.toString().toLowerCase() ?? '';
+      final searchLower = searchTerm.toLowerCase();
+      return title.contains(searchLower) || artist.contains(searchLower);
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: canciones.length,
-      itemBuilder: (context, index) {
-        final cancion = canciones[index];
-        final esFavorito = favoritos.contains(cancion);
-        return ListTile(
-          leading: Image.network(cancion['imageUrl']),
-          title: Text(cancion['titulo']),
-          subtitle: Text('${cancion['artista']} • ${cancion['genero']}'),
-          trailing: IconButton(
-            icon: Icon(
-              esFavorito ? Icons.favorite : Icons.favorite_border,
-              color: esFavorito ? Colors.red : null,
+    return Column(
+      children: [
+        // Agregamos el SongSwiper para las canciones destacadas
+        if (widget.canciones.isNotEmpty) ...[
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Destacadas',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            onPressed: () => onToggleFavorito(cancion),
           ),
-          onTap: () => onTapCancion(cancion),
-        );
-      },
+          SizedBox(
+            height: 350,
+            child: CancionSwiper(
+              songs: widget.canciones.take(5).toList(),
+              onSongSelected: widget.onTapCancion,
+              favorites: widget.favoritos,
+              onToggleFavorite: widget.onToggleFavorito,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar canción...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchTerm = value;
+                });
+              },
+            ),
+          ),
+        ],
+        Expanded(
+          child: ListView.builder(
+            itemCount: filteredCanciones.length,
+            itemBuilder: (context, index) {
+              final cancion = filteredCanciones[index];
+              return CancionCard(
+                song: cancion,
+                isFavorite: widget.favoritos.contains(cancion),
+                onToggleFavorite: () => widget.onToggleFavorito(cancion),
+                onTap: () => widget.onTapCancion(cancion),
+                showDetails: false,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -177,15 +237,12 @@ class _FavoritosView extends StatelessWidget {
       itemCount: favoritos.length,
       itemBuilder: (context, index) {
         final cancion = favoritos[index];
-        return ListTile(
-          leading: Image.network(cancion['imageUrl']),
-          title: Text(cancion['titulo']),
-          subtitle: Text('${cancion['artista']} • ${cancion['genero']}'),
-          trailing: IconButton(
-            icon: const Icon(Icons.favorite, color: Colors.red),
-            onPressed: () => onToggleFavorito(cancion),
-          ),
+        return CancionCard(
+          song: cancion,
+          isFavorite: true,
+          onToggleFavorite: () => onToggleFavorito(cancion),
           onTap: () => onTapCancion(cancion),
+          showDetails: true,
         );
       },
     );
@@ -213,36 +270,15 @@ class _FiltroGeneroView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final generos = canciones.map((cancion) => cancion['genero']).toSet().toList();
+    final generos = canciones.map((cancion) => cancion['genero'] as String).toSet().toList();
 
     return Column(
       children: [
         const SizedBox(height: 16),
-        const Text(
-          'Filtrar por género:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Center(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children: [
-              FilterChip(
-                label: const Text('Todos'),
-                selected: generoSeleccionado == null,
-                onSelected: (_) => onGeneroSeleccionado(null),
-              ),
-              ...generos.map(
-                (genero) => FilterChip(
-                  label: Text(genero),
-                  selected: genero == generoSeleccionado,
-                  onSelected: (_) => onGeneroSeleccionado(genero),
-                ),
-              ),
-            ],
-          ),
+        FiltroGenero(
+          genres: generos,
+          selectedGenre: generoSeleccionado,
+          onGenreSelected: onGeneroSeleccionado,
         ),
         const SizedBox(height: 16),
         Expanded(
@@ -250,19 +286,12 @@ class _FiltroGeneroView extends StatelessWidget {
             itemCount: cancionesFiltradas.length,
             itemBuilder: (context, index) {
               final cancion = cancionesFiltradas[index];
-              final esFavorito = favoritos.contains(cancion);
-              return ListTile(
-                leading: Image.network(cancion['imageUrl']),
-                title: Text(cancion['titulo']),
-                subtitle: Text('${cancion['artista']} • ${cancion['genero']}'),
-                trailing: IconButton(
-                  icon: Icon(
-                    esFavorito ? Icons.favorite : Icons.favorite_border,
-                    color: esFavorito ? Colors.red : null,
-                  ),
-                  onPressed: () => onToggleFavorito(cancion),
-                ),
+              return CancionCard(
+                song: cancion,
+                isFavorite: favoritos.contains(cancion),
+                onToggleFavorite: () => onToggleFavorito(cancion),
                 onTap: () => onTapCancion(cancion),
+                showDetails: true,
               );
             },
           ),

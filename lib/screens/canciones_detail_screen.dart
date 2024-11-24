@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/cancion_card.dart';
 
 class DetalleCancionScreen extends StatefulWidget {
   const DetalleCancionScreen({Key? key}) : super(key: key);
@@ -45,33 +46,47 @@ class _DetalleCancionScreenState extends State<DetalleCancionScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Image.network(cancion['imageUrl']),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                cancion['titulo'],
-                style: Theme.of(context).textTheme.titleLarge,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CancionCard(
+                song: cancion,
+                isFavorite: esFavorita,
+                onToggleFavorite: () {
+                  setState(() {
+                    esFavorita = !esFavorita;
+                    onToggleFavorito();
+                  });
+                },
+                onTap: () {}, // No necesitamos navegación aquí
+                showDetails: true,
+                width: double.infinity,
               ),
-            ),
-            SwitchListTile(
-              value: esFavorita,
-              onChanged: (valor) {
-                setState(() {
-                  esFavorita = valor;
-                  onToggleFavorito();
-                });
-              },
-              title: const Text('Favorita'),
-            ),
-            const SizedBox(height: 16),
-            Text('Artista: ${cancion['artista']}'),
-            Text('Género: ${cancion['genero']}'),
-            Text('Duración: ${cancion['duracion']}'),
-          ],
+              const SizedBox(height: 16),
+              // Información adicional que quieras mostrar
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Información adicional',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      Text('Duración: ${cancion['duracion']}'),
+                      Text('Álbum: ${cancion['album'] ?? 'No disponible'}'),
+                      Text('Año: ${cancion['año'] ?? 'No disponible'}'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
