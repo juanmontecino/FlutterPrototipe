@@ -6,6 +6,7 @@ class DrawerMenu extends StatelessWidget {
     {'route': 'profile', 'title': 'Perfil usuario', 'subtitle': ''},
     {'route': 'news', 'title': 'Montecino', 'subtitle': 'Noticias'},
     {'route': 'pokemon_list', 'title': 'Mangas', 'subtitle': 'Lista de Pokémon'},
+    {'route': 'canciones_lista', 'title': 'Rust', 'subtitle': 'Canciones'}, // Nueva sección Rust
   ];
 
   DrawerMenu({super.key});
@@ -18,28 +19,27 @@ class DrawerMenu extends StatelessWidget {
         children: [
           const _DrawerHeaderAlternative(),
           ...ListTile.divideTiles(
-              context: context,
-              tiles: _menuItems
-                  .map((item) => ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 10),
-                        dense: true,
-                        minLeadingWidth: 25,
-                        iconColor: Colors.blueGrey,
-                        title: Text(item['title']!,
-                            style: const TextStyle(fontFamily: 'FuzzyBubbles')),
-                        subtitle: Text(item['subtitle'] ?? '',
-                            style: const TextStyle(
-                                fontFamily: 'RobotoMono', fontSize: 11)),
-                        leading: const Icon(Icons.arrow_right),
-                        /* trailing: const Icon(Icons.arrow_right), */
-                        onTap: () {
-                          Navigator.pop(context);
-                          //Navigator.pushReplacementNamed(context, item['route']!);
-                          Navigator.pushNamed(context, item['route']!);
-                        },
-                      ))
-                  .toList())
+            context: context,
+            tiles: _menuItems
+                .map((item) => ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      dense: true,
+                      minLeadingWidth: 25,
+                      iconColor: Colors.blueGrey,
+                      title: Text(item['title']!,
+                          style: const TextStyle(fontFamily: 'FuzzyBubbles')),
+                      subtitle: Text(item['subtitle'] ?? '',
+                          style: const TextStyle(
+                              fontFamily: 'RobotoMono', fontSize: 11)),
+                      leading: const Icon(Icons.arrow_right),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, item['route']!);
+                      },
+                    ))
+                .toList(),
+          ),
         ],
       ),
     );
