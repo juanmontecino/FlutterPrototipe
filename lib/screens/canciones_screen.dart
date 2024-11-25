@@ -137,6 +137,13 @@ class _ListaCancionesView extends StatefulWidget {
 
 class _ListaCancionesViewState extends State<_ListaCancionesView> {
   String searchTerm = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   List<Map<String, dynamic>> get filteredCanciones {
     if (searchTerm.isEmpty) {
@@ -152,63 +159,94 @@ class _ListaCancionesViewState extends State<_ListaCancionesView> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isSearching = searchTerm.isNotEmpty;
+
     return Column(
       children: [
-        // Agregamos el SongSwiper para las canciones destacadas
-        if (widget.canciones.isNotEmpty) ...[
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Destacadas',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(
-            height: 350,
-            child: CancionSwiper(
-              songs: widget.canciones.take(5).toList(),
-              onSongSelected: widget.onTapCancion,
-              favorites: widget.favoritos,
-              onToggleFavorite: widget.onToggleFavorito,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Buscar canción...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        // Cuadro de búsqueda
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Buscar canción...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: searchTerm.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          _searchController.clear();
+                          searchTerm = '';
+                        });
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+                borderSide: BorderSide.none,
               ),
-              onChanged: (value) {
-                setState(() {
-                  searchTerm = value;
-                });
-              },
+              filled: true,
+              fillColor: Colors.grey[200],
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
-          ),
-        ],
-        Expanded(
-          child: ListView.builder(
-            itemCount: filteredCanciones.length,
-            itemBuilder: (context, index) {
-              final cancion = filteredCanciones[index];
-              return CancionCard(
-                song: cancion,
-                isFavorite: widget.favoritos.contains(cancion),
-                onToggleFavorite: () => widget.onToggleFavorito(cancion),
-                onTap: () => widget.onTapCancion(cancion),
-                showDetails: false,
-              );
+            onChanged: (value) {
+              setState(() {
+                searchTerm = value;
+              });
             },
           ),
         ),
+
+        // Mostrar destacadas y lista de canciones solo si no hay búsqueda activa
+        if (!isSearching) ...[
+          if (widget.canciones.isNotEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Destacadas',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+          if (widget.canciones.isNotEmpty)
+            SizedBox(
+              height: 350,
+              child: CancionSwiper(
+                songs: widget.canciones.take(3).toList(),
+                onSongSelected: widget.onTapCancion,
+                favorites: widget.favoritos,
+                onToggleFavorite: widget.onToggleFavorito,
+              ),
+            ),
+        ],
+
+        // Mostrar lista filtrada si hay búsqueda activa
+        if (isSearching)
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredCanciones.length,
+              itemBuilder: (context, index) {
+                final cancion = filteredCanciones[index];
+                return CancionCard(
+                  song: cancion,
+                  isFavorite: widget.favoritos.contains(cancion),
+                  onToggleFavorite: () => widget.onToggleFavorito(cancion),
+                  onTap: () => widget.onTapCancion(cancion),
+                );
+              },
+            ),
+          ),
+
+        // Mensaje cuando no hay resultados de búsqueda
+        if (isSearching && filteredCanciones.isEmpty)
+          const Expanded(
+            child: Center(
+              child: Text(
+                'No se encontraron canciones.',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
       ],
     );
   }
