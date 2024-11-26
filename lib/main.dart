@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_guide_2024/helpers/preferences.dart';
+import 'package:flutter_guide_2024/providers/pokemon_provider.dart';
 import 'package:flutter_guide_2024/providers/theme_provider.dart';
 import 'package:flutter_guide_2024/screens/screens.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,10 @@ void main() async {
     providers: [
       ChangeNotifierProvider<ThemeProvider>(
         create: (_) => ThemeProvider(isDarkMode: Preferences.darkmode),
+      ),
+      ChangeNotifierProvider<PokemonProvider>(
+        create: (_) => PokemonProvider(), 
+        lazy: false,
       ),
     ],
     child: const MyApp(),
