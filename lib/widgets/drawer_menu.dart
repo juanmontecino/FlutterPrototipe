@@ -6,6 +6,7 @@ class DrawerMenu extends StatelessWidget {
     {'route': 'profile', 'title': 'Perfil usuario', 'subtitle': ''},
     {'route': 'news', 'title': 'Montecino', 'subtitle': 'Noticias'},
     {'route': 'pokemon_list', 'title': 'Mangas', 'subtitle': 'Lista de Pokémon'},
+    {'route': 'libros_list', 'title': 'Santicchia', 'subtitle': 'Lista de libros'},
     {'route': 'canciones_lista', 'title': 'Rust', 'subtitle': 'Canciones'}, // Nueva sección Rust
   ];
 
