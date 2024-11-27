@@ -19,7 +19,6 @@ class LibrosProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       
-      
       await Future.delayed(const Duration(seconds: 1));
       _libros = Libro.mockData;
       _error = '';
