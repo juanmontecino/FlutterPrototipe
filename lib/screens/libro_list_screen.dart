@@ -109,13 +109,8 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Librería'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: _showSearchBottomSheet,
-          ),
-        ],
+        title: const Text('Lista De Libros'),
+        
       ),
       body: Consumer<LibrosProvider>(
         builder: (context, librosProvider, child) {
