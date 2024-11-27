@@ -13,9 +13,38 @@ class LibroDetailScreen extends StatelessWidget {
 
     if (libro == null) {
       return Scaffold(
-        appBar: AppBar(),
-        body: const Center(
-          child: Text('Libro no encontrado'),
+        appBar: AppBar(
+          title: const Text('Error'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline, 
+                size: 100, 
+                color: Colors.red
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Libro no encontrado',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: Colors.red
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'El libro solicitado no existe en la biblioteca.',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Volver'),
+              )
+            ],
+          ),
         ),
       );
     }

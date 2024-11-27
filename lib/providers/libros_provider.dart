@@ -20,7 +20,10 @@ class LibrosProvider extends ChangeNotifier {
       notifyListeners();
       
       await Future.delayed(const Duration(seconds: 1));
-      _libros = Libro.mockData;
+      _libros = Libro.mockData.map((libro) => {
+        ...libro,
+        'leido': false 
+      }).toList();
       _error = '';
     } catch (e) {
       _error = 'Error al cargar los libros';
@@ -31,21 +34,48 @@ class LibrosProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> refrescarLibros() async {
-    _libros = [];
-    notifyListeners();
-    await cargarLibros();
-  }
-
-  List<Map<String, dynamic>> searchLibros(String searchTerm) {
-    return _libros.where((libro) => libro['titulo'].toLowerCase().contains(searchTerm.toLowerCase())).toList();
-  }
 
   Map<String, dynamic>? getLibroById(String id) {
+ 
+    final stringId = id.toString();
+    
+    print('Buscando libro con ID: $stringId');
+    print('Libros disponibles: ${_libros.map((l) => l['id'])}');
+
     try {
-      return _libros.firstWhere((libro) => libro['id'] == id);
+      return _libros.firstWhere(
+        (libro) => libro['id'].toString() == stringId,
+        orElse: () => throw Exception('Libro no encontrado')
+      );
     } catch (e) {
+      print('Error al buscar libro: $e');
       return null;
     }
+  }
+
+  void marcarLibroComoLeido(String id, bool leido) {
+    final index = _libros.indexWhere((libro) => libro['id'] == id);
+    if (index != -1) {
+      _libros[index]['leido'] = leido;
+      notifyListeners();
+    }
+  }
+
+  List<Map<String, dynamic>> filtrarLibros({
+    String searchTerm = '', 
+    String genero = 'Todos', 
+    bool? leido
+  }) {
+    return _libros.where((libro) {
+      bool matchSearch = searchTerm.isEmpty || 
+        libro['titulo'].toLowerCase().contains(searchTerm.toLowerCase()) ||
+        libro['autor'].toLowerCase().contains(searchTerm.toLowerCase());
+      
+      bool matchGenero = genero == 'Todos' || libro['genero'] == genero;
+      
+      bool matchLeido = leido == null || libro['leido'] == leido;
+
+      return matchSearch && matchGenero && matchLeido;
+    }).toList();
   }
 }
