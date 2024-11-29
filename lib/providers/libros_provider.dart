@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_guide_2024/mocks/libros_mock.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LibrosProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _libros = [];
   bool _isLoading = false;
   String _error = '';
+
+  static const String _baseUrl = 'http://10.0.2.2:3000/api/v1/libros'; 
 
   List<Map<String, dynamic>> get libros => _libros;
   bool get isLoading => _isLoading;
@@ -14,19 +17,37 @@ class LibrosProvider extends ChangeNotifier {
     cargarLibros();
   }
 
-  Future<void> cargarLibros() async {
+  Future<void> cargarLibros({
+    String tema = 'ficcion', 
+    int page = 1
+  }) async {
     try {
       _isLoading = true;
       notifyListeners();
       
-      await Future.delayed(const Duration(seconds: 1));
-      _libros = Libro.mockData.map((libro) => {
-        ...libro,
-        'leido': false 
-      }).toList();
-      _error = '';
+      final response = await http.get(
+        Uri.parse('$_baseUrl?tema=$tema&page=$page')
+      );
+      
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        _libros = (data['libros'] as List).map((libro) => {
+          'id': libro['id'] ?? '',
+          'titulo': libro['titulo'] ?? 'Título desconocido',
+          'autor': libro['autores']?.first ?? 'Autor desconocido',
+          'descripcion': libro['descripcion'] ?? 'Sin descripción',
+          'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
+          'genero': libro['genero'] ?? 'Ficción',
+          'leido': false
+        }).toList();
+        
+        _error = '';
+      } else {
+        _error = 'Error al cargar los libros: ${response.statusCode}';
+        _libros = [];
+      }
     } catch (e) {
-      _error = 'Error al cargar los libros';
+      _error = 'Error de conexión: $e';
       _libros = [];
     } finally {
       _isLoading = false;
@@ -34,21 +55,27 @@ class LibrosProvider extends ChangeNotifier {
     }
   }
 
-
-  Map<String, dynamic>? getLibroById(String id) {
- 
-    final stringId = id.toString();
-    
-    print('Buscando libro con ID: $stringId');
-    print('Libros disponibles: ${_libros.map((l) => l['id'])}');
-
+  Future<Map<String, dynamic>?> getLibroById(String id) async {
     try {
-      return _libros.firstWhere(
-        (libro) => libro['id'].toString() == stringId,
-        orElse: () => throw Exception('Libro no encontrado')
-      );
+      final response = await http.get(Uri.parse('$_baseUrl/$id'));
+      
+      if (response.statusCode == 200) {
+        final libro = json.decode(response.body);
+        return {
+          'id': libro['id'] ?? '',
+          'titulo': libro['titulo'] ?? 'Título desconocido',
+          'autor': libro['autores']?.first ?? 'Autor desconocido',
+          'descripcion': libro['descripcion'] ?? 'Sin descripción',
+          'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
+          'genero': libro['genero'] ?? 'Ficción',
+          'leido': false
+        };
+      } else {
+        print('Error al obtener libro: ${response.statusCode}');
+        return null;
+      }
     } catch (e) {
-      print('Error al buscar libro: $e');
+      print('Error de conexión: $e');
       return null;
     }
   }

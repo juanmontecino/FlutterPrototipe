@@ -1,4 +1,3 @@
-// libro_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/libros_provider.dart';
@@ -90,6 +89,9 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
+                      Provider.of<LibrosProvider>(context, listen: false).cargarLibros(
+                        tema: _selectedGenre == 'Todos' ? 'ficcion' : _selectedGenre
+                      );
                       setState(() {});
                       Navigator.pop(context);
                     },
@@ -103,14 +105,11 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
         );
       },
     );
-  }
-
-  @override
+  }  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista De Libros'),
-        
       ),
       body: Consumer<LibrosProvider>(
         builder: (context, librosProvider, child) {
