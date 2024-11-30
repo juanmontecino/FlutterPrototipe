@@ -1,19 +1,9 @@
-# flutter_guide_2024
+# Flutter app
 
-Proyecto guía que muestra el uso de los diferentes Widgets de Flutter.
+### Hecha por Agustin Santicchia, Axel Rust, Juan Cruz Montecino y Axel Rust
 
-## Configurar e instalación de flutter
-- [get started](https://docs.flutter.dev/get-started/codelab)
+Abrir el menu lateral para navegar mediante las screens de los participantes.
+Toda la informacion esta siendo mockeada.
 
-## Ejemplos prácticos
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-## Documentación de ayuda
-[online documentation](https://docs.flutter.dev/)
-
-## Catalogo de Widgets
-[Widget catalog](https://docs.flutter.dev/ui/widgets/)
-
-
-## Screenshots
-![Demo Home](assets/images/demo.jpg)
+## Juan Cruz Montecino (News Screen)
+En esta pantalla se puede ver diferentes noticias del mundo, de distinta indole. En la seccion inferior esta el navegador para dirigirte a la seccion de busqueda que es completamente funcional incluyendo el filtrado por categoria.
