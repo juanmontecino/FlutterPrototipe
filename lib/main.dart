@@ -8,9 +8,11 @@ import 'package:flutter_guide_2024/screens/libro_detail_screen.dart';
 import 'package:flutter_guide_2024/screens/libro_list_screen.dart';
 import 'package:flutter_guide_2024/screens/screens.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Preferences.initShared();
 
   runApp(MultiProvider(
@@ -24,8 +26,8 @@ void main() async {
       ChangeNotifierProvider<CancionesProvider>( // Nuevo Provider
         create: (_) => CancionesProvider(),
       ),
-      ChangeNotifierProvider(
-        create: (_) => LibrosProvider()
+      ChangeNotifierProvider<LibrosProvider>(
+        create: (_) => LibrosProvider(),
       ),
     ],
     child: const MyApp(),
@@ -48,8 +50,8 @@ class MyApp extends StatelessWidget {
         'profile': (context) => ProfileScreen(),
         'pokemon_list': (context) => ListadoScreen(),
         'pokemon_detail': (context) => PokemonDetailScreen(),
-        'canciones_lista': (context) => ListaCancionesScreen(), 
-        'canciones_detalle': (context) => DetalleCancionScreen(), 
+        'canciones_lista': (context) => ListaCancionesScreen(),
+        'canciones_detalle': (context) => DetalleCancionScreen(),
         'libros_list': (_) => const LibrosListScreen(),
         'libro_detail': (_) => const LibroDetailScreen(),
       },
