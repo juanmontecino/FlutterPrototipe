@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+final String apiUrl = kIsWeb 
+    ? "http://localhost:3000/api/v1/libros" 
+    : "http://10.0.2.2:3000/api/v1/libros";
 
 class LibrosProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _libros = [];
   bool _isLoading = false;
   String _error = '';
-
-  static final String _baseUrl = dotenv.env['API_URL']!;
 
   List<Map<String, dynamic>> get libros => _libros;
   bool get isLoading => _isLoading;
@@ -23,28 +25,25 @@ class LibrosProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final response = await http.get(
-        Uri.parse('$_baseUrl/api/v1/libros?tema=$tema&page=$page'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await http.get(Uri.parse('$apiUrl?tema=$tema&page=$page'));
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final data = json.decode(response.body);
         _libros = (data['libros'] as List).map((libro) => {
-          'id': libro['id'],
-          'titulo': libro['titulo'],
-          'autor': libro['autores']?.first ?? 'Autor desconocido',
+          'id': libro['id'].toString(),
+          'titulo': libro['titulo'] ?? 'Sin título',
+          'autor': (libro['autores'] is List && libro['autores'].isNotEmpty) 
+              ? libro['autores'][0] 
+              : 'Autor desconocido',
           'descripcion': libro['descripcion'] ?? 'Sin descripción',
           'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
           'genero': libro['genero'] ?? 'Ficción',
-          'leido': false,
+          'leido': false
         }).toList();
 
         _error = '';
       } else {
-        _error = 'Error al cargar los libros: ${response.statusCode}';
+        _error = 'Error ${response.statusCode}: ${response.body}';
         _libros = [];
       }
     } catch (e) {
@@ -58,26 +57,23 @@ class LibrosProvider extends ChangeNotifier {
 
   Future<Map<String, dynamic>?> getLibroById(String id) async {
     try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/api/v1/libros/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await http.get(Uri.parse('$apiUrl/$id'));
 
       if (response.statusCode == 200) {
         final libro = json.decode(response.body);
         return {
-          'id': libro['id'],
-          'titulo': libro['titulo'],
-          'autor': libro['autores']?.first ?? 'Autor desconocido',
+          'id': libro['id'].toString(),
+          'titulo': libro['titulo'] ?? 'Sin título',
+          'autor': (libro['autores'] is List && libro['autores'].isNotEmpty) 
+              ? libro['autores'][0] 
+              : 'Autor desconocido',
           'descripcion': libro['descripcion'] ?? 'Sin descripción',
           'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
           'genero': libro['genero'] ?? 'Ficción',
-          'leido': false,
+          'leido': false
         };
       } else {
-        print('Error al obtener libro: ${response.statusCode}');
+        print('Error al obtener libro: ${response.statusCode} - ${response.body}');
         return null;
       }
     } catch (e) {
@@ -92,5 +88,18 @@ class LibrosProvider extends ChangeNotifier {
       _libros[index]['leido'] = leido;
       notifyListeners();
     }
+  }
+
+  List<Map<String, dynamic>> filtrarLibros({String searchTerm = '', String genero = 'Todos', bool? leido}) {
+    return _libros.where((libro) {
+      bool matchSearch = searchTerm.isEmpty ||
+          libro['titulo'].toLowerCase().contains(searchTerm.toLowerCase()) ||
+          libro['autor'].toLowerCase().contains(searchTerm.toLowerCase());
+
+      bool matchGenero = genero == 'Todos' || libro['genero'] == genero;
+      bool matchLeido = leido == null || libro['leido'] == leido;
+
+      return matchSearch && matchGenero && matchLeido;
+    }).toList();
   }
 }

@@ -56,15 +56,12 @@ class LibroCard extends StatelessWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Checkbox(
-                        value: libro['leido'] ?? false,
-                        onChanged: (bool? newValue) {
-                          librosProvider.marcarLibroComoLeido(
-                            libro['id'], 
-                            newValue ?? false
-                          );
-                        },
-                      ),
+                     Checkbox(
+                      value: libro['leido'] ?? false,
+                      onChanged: (bool? newValue) {
+                        librosProvider.marcarLibroComoLeido(libro['id'], newValue ?? false);
+                      },
+                    ),
                       Text(
                         'Leído',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
