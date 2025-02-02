@@ -55,15 +55,8 @@ class _DetalleCancionScreenState extends State<DetalleCancionScreen> {
               CancionCard(
                 song: cancion,
                 isFavorite: esFavorita,
-                onToggleFavorite: () {
-                  setState(() {
-                    esFavorita = !esFavorita;
-                    onToggleFavorito();
-                  });
-                },
-                onTap: () {}, // No necesitamos navegación aquí
-                showDetails: true,
-                width: double.infinity,
+                onToggleFavorite: () => onToggleFavorito(cancion),
+                onTap: () {},
               ),
               const SizedBox(height: 16),
               // Información adicional que quieras mostrar
