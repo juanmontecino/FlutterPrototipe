@@ -52,8 +52,8 @@ class MyApp extends StatelessWidget {
         'pokemon_detail': (context) => PokemonDetailScreen(),
         'canciones_lista': (context) => ListaCancionesScreen(),
         'canciones_detalle': (context) => DetalleCancionScreen(),
-        'libros_list': (_) => const LibrosListScreen(),
-        'libro_detail': (_) => const LibroDetailScreen(),
+        'libros_list': (context) => const LibrosListScreen(),
+        'libro_detail': (context) => const LibroDetailScreen(),
       },
     );
   }
