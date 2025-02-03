@@ -102,10 +102,7 @@ class NewsSearchProvider extends ChangeNotifier {
         // Filtrar por tiempo
         if (_onlyLatestNews) {
           final publishDate = DateTime.parse(article.publishedAt);
-          print('publishDate: $publishDate');
           final difference = now.difference(publishDate);
-          print('difference: $difference');
-          print('matchesSearch: $matchesSearch');
           return matchesSearch && difference.inHours <= 168;
           
         }

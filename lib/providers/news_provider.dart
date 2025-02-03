@@ -189,7 +189,6 @@ class NewsProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print('API Response: ${response.body}');
         final NewsApiResponse apiResponse =
             NewsApiResponse.fromJson(json.decode(response.body));
 
