@@ -102,10 +102,17 @@ class NewsProvider extends ChangeNotifier {
   String _error = '';
   int _totalResults = 0;
 
+  // Parámetros de búsqueda
+  String _currentTema = 'argentina';
+  DateTime? _desde;
+  DateTime? _hasta;
+  int _pageSize = 50;
+
   List<NewsArticle> get news => _news;
   bool get isLoading => _isLoading;
   String get error => _error;
   int get totalResults => _totalResults;
+  String get currentTema => _currentTema;
 
   final http.Client _client;
 
@@ -113,27 +120,76 @@ class NewsProvider extends ChangeNotifier {
     loadNews();
   }
 
-  @override
-  void dispose() {
-    _client.close();
-    super.dispose();
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
-  Future<void> loadNews() async {
+  Uri _buildUri({
+    String? tema,
+    DateTime? desde,
+    DateTime? hasta,
+    int? cantidad,
+  }) {
+    final queryParams = <String, String>{};
+
+    // Añadir parámetros solo si tienen valor
+    if (tema != null && tema.isNotEmpty) {
+      queryParams['tema'] = tema;
+    }
+
+    if (desde != null) {
+      queryParams['desde'] = _formatDate(desde);
+    }
+
+    if (hasta != null) {
+      queryParams['hasta'] = _formatDate(hasta);
+    }
+
+    // Si se especifica cantidad, usar el endpoint específico
+    if (cantidad != null) {
+      return Uri.parse('$_baseUrl/news/$cantidad');
+    }
+
+    return Uri.parse('$_baseUrl/news').replace(queryParameters: queryParams);
+  }
+
+  Future<void> loadNews({
+    String? tema,
+    DateTime? desde,
+    DateTime? hasta,
+    int? cantidad,
+  }) async {
     try {
       _isLoading = true;
       _error = '';
       notifyListeners();
 
+      // Actualizar el tema actual si se proporciona uno nuevo
+      if (tema != null && tema.isNotEmpty) {
+        _currentTema = tema;
+      }
+
+      // Actualizar fechas si se proporcionan
+      if (desde != null) _desde = desde;
+      if (hasta != null) _hasta = hasta;
+
+      final uri = _buildUri(
+        tema: _currentTema,
+        desde: _desde,
+        hasta: _hasta,
+        cantidad: cantidad,
+      );
+
       final response = await _client.get(
-        Uri.parse('$_baseUrl/news'), // Ajusta el endpoint según tu API
+        uri,
         headers: {
           'Content-Type': 'application/json',
         },
       );
 
       if (response.statusCode == 200) {
-        print('API Response: ${response.body}'); // Añade este log
+        print('API Response: ${response.body}');
         final NewsApiResponse apiResponse =
             NewsApiResponse.fromJson(json.decode(response.body));
 
@@ -159,5 +215,31 @@ class NewsProvider extends ChangeNotifier {
     _news = [];
     notifyListeners();
     await loadNews();
+  }
+
+  // Método para cambiar el tema de búsqueda
+  Future<void> setTema(String newTema) async {
+    if (newTema != _currentTema) {
+      await loadNews(tema: newTema);
+    }
+  }
+
+  // Método para filtrar por rango de fechas
+  Future<void> setDateRange(DateTime? startDate, DateTime? endDate) async {
+    await loadNews(
+      desde: startDate,
+      hasta: endDate,
+    );
+  }
+
+  // Método para cargar una cantidad específica de noticias
+  Future<void> loadSpecificAmount(int cantidad) async {
+    await loadNews(cantidad: cantidad);
+  }
+
+  @override
+  void dispose() {
+    _client.close();
+    super.dispose();
   }
 }
