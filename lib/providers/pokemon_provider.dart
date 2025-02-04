@@ -15,44 +15,45 @@ class PokemonProvider extends ChangeNotifier {
     getPokemons(); 
   }
 
-  /// Obtiene la lista de Pokémon con detalles
-  Future<void> getPokemons([int limit = 10]) async {
-    if (isLoading) return; // Evita peticiones duplicadas si ya está cargando
+Future<void> getPokemons([int limit = 10]) async {
+  if (isLoading) return; 
 
-    try {
-      isLoading = true;
-      notifyListeners();
+  try {
+    isLoading = true;
+    notifyListeners();
 
-      // Primera petición: obtener listado con nombres y URLs
-      final url = Uri.parse(
-          'https://pokeapi.co/api/v2/pokemon?offset=${currentPage * limit}&limit=$limit');
-      final response = await http.get(url);
+    final url = Uri.parse(
+        'https://pokeapi.co/api/v2/pokemon?offset=${currentPage * limit}&limit=$limit');
+    final response = await http.get(url);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final results = data['results'] as List;
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final results = data['results'] as List;
 
-        // Segunda petición: obtener detalles de cada Pokémon
-        for (var item in results) {
-          final detailResponse = await http.get(Uri.parse(item['url']));
-          if (detailResponse.statusCode == 200) {
-            final detailData = json.decode(detailResponse.body);
-            final pokemon = Pokemon.fromJson(detailData);
-            listPokemons.add(pokemon);
-          }
+      // Obtener detalles en paralelo
+      final detailFutures = results.map((item) => http.get(Uri.parse(item['url'])));
+      final detailResponses = await Future.wait(detailFutures);
+
+      for (var detailResponse in detailResponses) {
+        if (detailResponse.statusCode == 200) {
+          final detailData = json.decode(detailResponse.body);
+          final pokemon = Pokemon.fromJson(detailData);
+          listPokemons.add(pokemon);
         }
-
-        currentPage++; // Incrementar página para la siguiente petición
-      } else {
-        print('Error en el servicio: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error al realizar el request: $e');
-    } finally {
-      isLoading = false;
-      notifyListeners();
+
+      currentPage++;
+    } else {
+      print('Error en el servicio: ${response.statusCode}');
     }
+  } catch (e) {
+    print('Error al realizar el request: $e');
+  } finally {
+    isLoading = false;
+    notifyListeners();
   }
+}
+
 
   /// Busca un Pokémon por su ID
   Future<Pokemon?> searchPokemonById(int id) async {
@@ -63,12 +64,15 @@ class PokemonProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final detailData = json.decode(response.body);
         return Pokemon.fromJson(detailData);
+      } else {
+        searchError = 'No se encontró el Pokémon con ID: $id';
       }
-      return null;
     } catch (e) {
+      searchError = 'Error de conexión';
       print('Error searching Pokemon: $e');
-      return null;
     }
+    notifyListeners();
+    return null;
   }
 
   /// Reinicia la búsqueda
