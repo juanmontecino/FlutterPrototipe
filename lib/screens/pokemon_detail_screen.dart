@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_guide_2024/mocks/pokemon_mock.dart';
+import 'package:flutter_guide_2024/models/pokemon_model.dart';
 import 'package:flutter_guide_2024/utils/pokemon_colors_utils.dart';
 import 'package:flutter_guide_2024/widgets/pokemon/pokemon_details_view.dart';
 import 'package:flutter_guide_2024/widgets/pokemon/pokemon_form_view.dart';

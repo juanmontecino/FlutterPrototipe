@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_guide_2024/mocks/pokemon_mock.dart';
+import 'package:flutter_guide_2024/models/pokemon_model.dart';
 import 'package:flutter_guide_2024/utils/pokemon_colors_utils.dart';
 
 class PokemonFormView extends StatefulWidget {
@@ -56,7 +56,7 @@ class _PokemonFormViewState extends State<PokemonFormView> {
     return Center(
       child: Container(
         height: 150,
-        child: Image.network(widget.pokemon.imageUrl),
+        child: Image.network(widget.pokemon.sprites.frontDefault),
       ),
     );
   }

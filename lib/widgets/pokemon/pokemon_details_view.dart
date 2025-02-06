@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_guide_2024/mocks/pokemon_mock.dart';
+import 'package:flutter_guide_2024/models/pokemon_model.dart';
 import 'package:flutter_guide_2024/utils/pokemon_colors_utils.dart';
+
 
 class PokemonDetailsView extends StatelessWidget {
   final Pokemon pokemon;
@@ -115,7 +116,7 @@ Widget _buildDetailsContainer(double width, double height, BuildContext context)
               width,
               context
             ),
-            _buildDetailRow('Especie', pokemon.species.name, width, context),
+            _buildDetailRow('Especie', pokemon.types.map((type) => type.type.name).join(", "), width, context),
             _buildDetailRow(
               'Numero en Pokedex(ID)', 
               pokemon.id.toString(), 
@@ -134,7 +135,7 @@ Widget _buildDetailsContainer(double width, double height, BuildContext context)
       top: 50,
       left: (width / 2) - 150,
       child: Image.network(
-        pokemon.imageUrl,
+        pokemon.sprites.frontDefault,
         height: 300,
         fit: BoxFit.fitHeight,
       ),
@@ -153,7 +154,7 @@ Widget _buildDetailsContainer(double width, double height, BuildContext context)
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          const SizedBox(width: 20), // Separación fija
+          const SizedBox(width: 20),
           Container(
             child: Text(value,
               style: Theme.of(context).textTheme.bodyMedium,
