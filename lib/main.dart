@@ -7,6 +7,7 @@ import 'package:flutter_guide_2024/providers/news_provider.dart';
 import 'package:flutter_guide_2024/providers/canciones_provider.dart'; // Importa el nuevo provider
 import 'package:flutter_guide_2024/screens/libro_detail_screen.dart';
 import 'package:flutter_guide_2024/screens/libro_list_screen.dart';
+import 'package:flutter_guide_2024/providers/news_search_provider.dart'; // Nuevo import
 import 'package:flutter_guide_2024/screens/screens.dart';
 import 'package:provider/provider.dart';
 
@@ -23,14 +24,23 @@ Future<void> main() async {
         create: (_) => PokemonProvider(), 
         lazy: false,
       ),
-      ChangeNotifierProvider<NewsProvider>(
-        create: (_) => NewsProvider(),
-      ),
+
       ChangeNotifierProvider<CancionesProvider>( // Nuevo Provider
         create: (_) => CancionesProvider(),
       ),
       ChangeNotifierProvider<LibrosProvider>(
         create: (_) => LibrosProvider(),
+      ),
+      ChangeNotifierProvider<NewsProvider>(
+        create: (_) => NewsProvider(),
+      ),
+      // Añadimos el NewsSearchProvider que depende de NewsProvider
+      ChangeNotifierProxyProvider<NewsProvider, NewsSearchProvider>(
+        create: (context) => NewsSearchProvider(
+          newsProvider: context.read<NewsProvider>(),
+        ),
+        update: (context, newsProvider, previous) => 
+          previous ?? NewsSearchProvider(newsProvider: newsProvider),
       ),
     ],
     child: const MyApp(),
@@ -57,6 +67,9 @@ class MyApp extends StatelessWidget {
         'canciones_detalle': (context) => DetalleCancionScreen(),
         'libros_list': (_) => const LibrosListScreen(),
         'libro_detail': (_) => const LibroDetailScreen(),
+        'provider_navigation_bar_provider': (context) => NewsScreen(),
+        'profile': (context) => ProfileScreen(),
+        'search': (context) => const NewsSearchScreen(),
       },
     );
   }

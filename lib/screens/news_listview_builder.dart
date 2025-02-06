@@ -1,12 +1,24 @@
-// lib/screens/news_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/news_provider.dart';
-import '../widgets/news_card.dart';
 import '../screens/news_detail_screen.dart';
+import '../widgets/news_card.dart';
 
 class NewsListScreen extends StatelessWidget {
   const NewsListScreen({super.key});
+
+  Map<String, dynamic> _convertArticleToMap(NewsArticle article) {
+    return {
+      'imageUrl': article.urlToImage, // Imagen por defecto
+      'category': article.source.name,
+      'publishDate': article.publishedAt,
+      'title': article.title,
+      'description': article.description.isNotEmpty
+          ? article.description
+          : 'No hay descripción disponible', // Valor por defecto
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,26 +48,39 @@ class NewsListScreen extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: newsProvider.refreshNews,
-          child: ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: newsProvider.news.length,
-            separatorBuilder: (context, index) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final article = newsProvider.news[index];
-              return NewsCard(
-                article: article,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NewsDetailScreen(
-                        article: article,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+          child: Column(
+            children: [
+              if (newsProvider.totalResults > 0)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Total de noticias disponibles: ${newsProvider.totalResults}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              Expanded(
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: newsProvider.news.length,
+                  itemBuilder: (context, index) {
+                    final article = newsProvider.news[index];
+                    return NewsCard(
+                      article: _convertArticleToMap(article),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewsDetailScreen(
+                              article: _convertArticleToMap(article),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },
