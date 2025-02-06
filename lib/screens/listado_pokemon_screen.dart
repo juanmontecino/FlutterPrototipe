@@ -16,15 +16,18 @@ class _ListadoScreenState extends State<ListadoScreen> {
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<PokemonProvider>(context, listen: false);
-    provider.getPokemons(); // Carga inicial de Pokémon
+
+    Future.delayed(Duration.zero, () {
+      final provider = Provider.of<PokemonProvider>(context, listen: false);
+      provider.getPokemons(); // 🔹 Ahora se ejecuta después de que Flutter termine la construcción
+    });
 
     // Configura scroll infinito
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent &&
+      final provider = Provider.of<PokemonProvider>(context, listen: false);
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
           !provider.isLoading) {
-        provider.getPokemons(); // Carga más Pokémon al llegar al final
+        provider.getPokemons();
       }
     });
   }

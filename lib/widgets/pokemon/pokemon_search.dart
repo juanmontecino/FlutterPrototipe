@@ -9,7 +9,7 @@ class PokemonSearchDelegate extends SearchDelegate<Pokemon?> {
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
         },
@@ -20,7 +20,7 @@ class PokemonSearchDelegate extends SearchDelegate<Pokemon?> {
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, null);
       },
@@ -33,16 +33,16 @@ class PokemonSearchDelegate extends SearchDelegate<Pokemon?> {
     final searchId = int.tryParse(query);
 
     if (searchId == null) {
-      return Center(
+      return const Center(
         child: Text('Por favor ingresa un número válido'),
       );
     }
 
     return FutureBuilder<Pokemon?>(
-      future: Future.value(provider.searchPokemonById(searchId)),
+      future: provider.searchPokemonById(searchId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
@@ -53,23 +53,26 @@ class PokemonSearchDelegate extends SearchDelegate<Pokemon?> {
 
         final pokemon = snapshot.data;
         if (pokemon == null) {
-          return Center(
+          return const Center(
             child: Text('Pokémon no encontrado'),
           );
         }
+        final backgroundColor = PokemonColors.getColorForType(
+            pokemon.types.isNotEmpty ? pokemon.types.first.type.name : 'normal');
 
-        final backgroundColor = PokemonColors.getColorForType(pokemon.types.first.type.name);
+        final imageUrl = pokemon.sprites.frontDefault ??
+            'https://via.placeholder.com/150';
 
         return ListTile(
           tileColor: backgroundColor,
-          leading: Image.network(pokemon.sprites.frontDefault),
+          leading: Image.network(imageUrl),
           title: Text(
             pokemon.name.toUpperCase(),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           subtitle: Text(
             "Tipos: ${pokemon.types.map((t) => t.type.name).join(", ")}",
-            style: TextStyle(color: Colors.white70),
+            style: const TextStyle(color: Colors.white70),
           ),
           onTap: () {
             Navigator.pushNamed(
@@ -85,7 +88,7 @@ class PokemonSearchDelegate extends SearchDelegate<Pokemon?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('Busca un Pokémon por su número de Pokédex'),
     );
   }

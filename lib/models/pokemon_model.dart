@@ -27,15 +27,17 @@ class Pokemon {
     required this.weight,
   });
 
-  factory Pokemon.fromJson(Map<String, dynamic> json) => Pokemon(
-        id: json["id"],
-        name: json["name"],
-        sprites: Sprites.fromJson(json["sprites"]),
-        types: List<Type>.from(json["types"].map((x) => Type.fromJson(x))),
-        stats: List<Stat>.from(json["stats"].map((x) => Stat.fromJson(x))),
-        height: json["height"],
-        weight: json["weight"],
-      );
+  factory Pokemon.fromJson(Map<String, dynamic> json) {
+    return Pokemon(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? 'Desconocido',
+      height: json['height'] ?? 1,
+      weight: json['weight'] ?? 1,
+      sprites: Sprites.fromJson(json['sprites'] ?? {}),
+      types: (json['types'] as List?)?.map((e) => Type.fromJson(e)).toList() ?? [],
+      stats: (json['stats'] as List?)?.map((e) => Stat.fromJson(e)).toList() ?? [],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
