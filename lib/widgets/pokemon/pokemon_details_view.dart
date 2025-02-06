@@ -6,7 +6,7 @@ import 'package:flutter_guide_2024/utils/pokemon_colors_utils.dart';
 class PokemonDetailsView extends StatelessWidget {
   final Pokemon pokemon;
 
-  const PokemonDetailsView({Key? key, required this.pokemon}) : super(key: key);
+  const PokemonDetailsView({super.key, required this.pokemon});
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +148,7 @@ Widget _buildDetailsContainer(double width, double height, BuildContext context)
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start, // Alinea verticalmente al inicio
         children: [
-          Container(
+          SizedBox(
             width: width * 0.4,
             child: Text(label,
               style: Theme.of(context).textTheme.bodyMedium,

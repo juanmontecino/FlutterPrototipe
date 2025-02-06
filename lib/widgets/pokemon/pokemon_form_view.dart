@@ -5,7 +5,7 @@ import 'package:flutter_guide_2024/utils/pokemon_colors_utils.dart';
 class PokemonFormView extends StatefulWidget {
   final Pokemon pokemon;
 
-  const PokemonFormView({Key? key, required this.pokemon}) : super(key: key);
+  const PokemonFormView({super.key, required this.pokemon});
 
   @override
   State<PokemonFormView> createState() => _PokemonFormViewState();
@@ -54,7 +54,7 @@ class _PokemonFormViewState extends State<PokemonFormView> {
 
   Widget _buildPokemonImage() {
     return Center(
-      child: Container(
+      child: SizedBox(
         height: 150,
         child: Image.network(widget.pokemon.sprites.frontDefault),
       ),

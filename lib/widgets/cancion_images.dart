@@ -8,12 +8,12 @@ class CancionSwiper extends StatelessWidget {
   final Function(Map<String, dynamic>) onToggleFavorite;
 
   const CancionSwiper({
-    Key? key,
+    super.key,
     required this.songs,
     required this.onSongSelected,
     required this.favorites,
     required this.onToggleFavorite,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_guide_2024/models/pokemon_model.dart';
 
 class ListadoScreen extends StatefulWidget {
+  const ListadoScreen({super.key});
+
   @override
   _ListadoScreenState createState() => _ListadoScreenState();
 }
