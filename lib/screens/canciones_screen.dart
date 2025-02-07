@@ -275,13 +275,12 @@ class _FavoritosView extends StatelessWidget {
       itemCount: favoritos.length,
       itemBuilder: (context, index) {
         final cancion = favoritos[index];
-        return CancionCard(
-          song: cancion,
-          isFavorite: true,
-          onToggleFavorite: () => onToggleFavorito(cancion),
-          onTap: () => onTapCancion(cancion),
-          showDetails: true,
-        );
+        CancionCard(
+                song: cancion,
+                isFavorite: true,
+                onToggleFavorite: () => onToggleFavorito(cancion),
+                onTap: () {},
+              );
       },
     );
   }
@@ -308,32 +307,43 @@ class _FiltroGeneroView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final generos = canciones.map((cancion) => cancion['genero'] as String).toSet().toList();
+    final provider = Provider.of<CancionesProvider>(context);
 
     return Column(
       children: [
         const SizedBox(height: 16),
         FiltroGenero(
-          genres: generos,
-          selectedGenre: generoSeleccionado,
-          onGenreSelected: onGeneroSeleccionado,
+          genres: provider.generos,
+          selectedGenre: provider.generoActual,
+          onGenreSelected: (genero) {
+            if (genero == null) {
+              provider.cargarCanciones(genero: 'rock');
+            } else {
+              provider.cambiarGenero(genero);
+            }
+          },
         ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: ListView.builder(
-            itemCount: cancionesFiltradas.length,
-            itemBuilder: (context, index) {
-              final cancion = cancionesFiltradas[index];
-              return CancionCard(
+        if (provider.isLoading)
+          const Center(child: CircularProgressIndicator())
+        else if (provider.error.isNotEmpty)
+          Center(child: Text(provider.error))
+        else if (cancionesFiltradas.isEmpty)
+          const Center(child: Text('No hay canciones para este género'))
+        else
+          Expanded(
+            child: ListView.builder(
+              itemCount: cancionesFiltradas.length,
+              itemBuilder: (context, index) {
+                final cancion = cancionesFiltradas[index];
+                return CancionCard(
                 song: cancion,
                 isFavorite: favoritos.contains(cancion),
                 onToggleFavorite: () => onToggleFavorito(cancion),
                 onTap: () => onTapCancion(cancion),
-                showDetails: true,
               );
-            },
+              },
+            ),
           ),
-        ),
       ],
     );
   }
