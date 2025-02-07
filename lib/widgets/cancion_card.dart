@@ -8,12 +8,13 @@ class CancionCard extends StatelessWidget {
   final double? width;
 
   const CancionCard({
-    Key? key,
+    super.key,
     required this.song,
     required this.isFavorite,
     required this.onToggleFavorite,
     required this.onTap,
     this.width,
+    this.showDetails = false,
   }) : super(key: key);
 
   @override
@@ -21,7 +22,7 @@ class CancionCard extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(8),
-      child: Container(
+      child: SizedBox(
         width: width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

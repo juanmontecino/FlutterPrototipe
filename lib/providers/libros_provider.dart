@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-<<<<<<< HEAD
-=======
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 final String apiUrl = kIsWeb 
     ? "http://localhost:3000/api/v1/libros" 
     : "http://10.0.2.2:3000/api/v1/libros";
->>>>>>> Santicchia
 
 class LibrosProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _libros = [];
   bool _isLoading = false;
   String _error = '';
-
-  static const String _baseUrl = 'http://10.0.2.2:3000/api/v1/libros'; 
 
   List<Map<String, dynamic>> get libros => _libros;
   bool get isLoading => _isLoading;
@@ -25,26 +20,6 @@ class LibrosProvider extends ChangeNotifier {
     cargarLibros();
   }
 
-<<<<<<< HEAD
-  Future<void> cargarLibros({
-    String tema = 'ficcion', 
-    int page = 1
-  }) async {
-    try {
-      _isLoading = true;
-      notifyListeners();
-      
-      final response = await http.get(
-        Uri.parse('$_baseUrl?tema=$tema&page=$page')
-      );
-      
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        _libros = (data['libros'] as List).map((libro) => {
-          'id': libro['id'] ?? '',
-          'titulo': libro['titulo'] ?? 'Título desconocido',
-          'autor': libro['autores']?.first ?? 'Autor desconocido',
-=======
   Future<void> cargarLibros({String tema = 'ficcion', int page = 1}) async {
     try {
       _isLoading = true;
@@ -60,23 +35,14 @@ class LibrosProvider extends ChangeNotifier {
           'autor': (libro['autores'] is List && libro['autores'].isNotEmpty) 
               ? libro['autores'][0] 
               : 'Autor desconocido',
->>>>>>> Santicchia
           'descripcion': libro['descripcion'] ?? 'Sin descripción',
           'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
           'genero': libro['genero'] ?? 'Ficción',
           'leido': false
         }).toList();
-<<<<<<< HEAD
-        
-        _error = '';
-      } else {
-        _error = 'Error al cargar los libros: ${response.statusCode}';
-=======
-
         _error = '';
       } else {
         _error = 'Error ${response.statusCode}: ${response.body}';
->>>>>>> Santicchia
         _libros = [];
       }
     } catch (e) {
@@ -90,16 +56,6 @@ class LibrosProvider extends ChangeNotifier {
 
   Future<Map<String, dynamic>?> getLibroById(String id) async {
     try {
-<<<<<<< HEAD
-      final response = await http.get(Uri.parse('$_baseUrl/$id'));
-      
-      if (response.statusCode == 200) {
-        final libro = json.decode(response.body);
-        return {
-          'id': libro['id'] ?? '',
-          'titulo': libro['titulo'] ?? 'Título desconocido',
-          'autor': libro['autores']?.first ?? 'Autor desconocido',
-=======
       final response = await http.get(Uri.parse('$apiUrl/$id'));
 
       if (response.statusCode == 200) {
@@ -110,18 +66,13 @@ class LibrosProvider extends ChangeNotifier {
           'autor': (libro['autores'] is List && libro['autores'].isNotEmpty) 
               ? libro['autores'][0] 
               : 'Autor desconocido',
->>>>>>> Santicchia
           'descripcion': libro['descripcion'] ?? 'Sin descripción',
           'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
           'genero': libro['genero'] ?? 'Ficción',
           'leido': false
         };
       } else {
-<<<<<<< HEAD
-        print('Error al obtener libro: ${response.statusCode}');
-=======
         print('Error al obtener libro: ${response.statusCode} - ${response.body}');
->>>>>>> Santicchia
         return null;
       }
     } catch (e) {

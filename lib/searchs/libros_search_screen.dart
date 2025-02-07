@@ -14,7 +14,7 @@ class BuscarLibrosScreen extends StatefulWidget {
 class _BuscarLibrosScreenState extends State<BuscarLibrosScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
-  String _selectedGenre = 'Todos';
+  final String _selectedGenre = 'Todos';
   bool? _libroLeido;
 
   final List<String> generos = [
@@ -168,7 +168,7 @@ class _BuscarLibrosScreenState extends State<BuscarLibrosScreen> {
                   const SizedBox(height: 16),
                   Text(
                     _searchTerm.isNotEmpty 
-                      ? 'Libro no encontrado: "${_searchTerm}"' 
+                      ? 'Libro no encontrado: "$_searchTerm"' 
                       : 'No se encontraron libros',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.grey[600]

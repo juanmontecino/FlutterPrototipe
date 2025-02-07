@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/cancion_card.dart';
 
 class DetalleCancionScreen extends StatefulWidget {
-  const DetalleCancionScreen({Key? key}) : super(key: key);
+  const DetalleCancionScreen({super.key});
 
   @override
   _DetalleCancionScreenState createState() => _DetalleCancionScreenState();

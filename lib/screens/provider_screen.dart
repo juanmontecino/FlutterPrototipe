@@ -23,7 +23,7 @@ class DemoProviderScreen extends StatelessWidget {
 }
 
 class ControlNavigation extends StatelessWidget {
-  ControlNavigation({super.key});
+  const ControlNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +59,8 @@ class ControlNavigation extends StatelessWidget {
 
 class ElementsBody extends StatelessWidget {
   const ElementsBody({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
