@@ -7,9 +7,9 @@ class CancionesProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _canciones = [];
   bool _isLoading = false;
   String _error = '';
-  String _generoActual = 'rock'; // Género por defecto
+  String _generoActual = 'rock'; //generopor defecto
 
-  // Lista de géneros disponibles
+  //lista de generos disponibles
   final List<String> generos = [
     'rock',
     'pop',

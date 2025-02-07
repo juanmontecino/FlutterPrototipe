@@ -313,11 +313,10 @@ class _FiltroGeneroView extends StatelessWidget {
       children: [
         const SizedBox(height: 16),
         FiltroGenero(
-          genres: provider.generos, // Usamos los géneros del provider
-          selectedGenre: provider.generoActual, // Usamos el género actual del provider
+          genres: provider.generos,
+          selectedGenre: provider.generoActual,
           onGenreSelected: (genero) {
             if (genero == null) {
-              // Si selecciona "Todos", cargamos el género por defecto
               provider.cargarCanciones(genero: 'rock');
             } else {
               provider.cambiarGenero(genero);

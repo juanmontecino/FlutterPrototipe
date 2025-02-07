@@ -59,7 +59,6 @@ class _DetalleCancionScreenState extends State<DetalleCancionScreen> {
                 onTap: () {},
               ),
               const SizedBox(height: 16),
-              // Información adicional que quieras mostrar
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
