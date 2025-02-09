@@ -15,7 +15,7 @@ class _BuscarLibrosScreenState extends State<BuscarLibrosScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
-  /// Normaliza el texto para búsqueda sin acentos ni caracteres especiales
+  // Normaliza el texto para búsqueda sin acentos ni caracteres especiales
   String normalizeText(String text) {
     return removeDiacritics(text)
         .replaceAll(RegExp(r'[^\w\s]'), '')

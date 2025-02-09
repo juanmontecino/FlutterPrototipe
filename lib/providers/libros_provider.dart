@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
-
-final String apiUrl = kIsWeb 
-    ? "http://localhost:3000/api/v1/libros" 
-    : "http://10.0.2.2:3000/api/v1/libros";
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 class LibrosProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _libros = [];
@@ -20,28 +16,43 @@ class LibrosProvider extends ChangeNotifier {
     cargarLibros();
   }
 
-  Future<void> cargarLibros({String tema = 'ficcion', int page = 1}) async {
+  String get apiUrl {
+    return dotenv.env['PATH'] ?? 'http://localhost:3000';
+  }
+
+  Future<void> cargarLibros() async {
     try {
       _isLoading = true;
       notifyListeners();
 
-      final response = await http.get(Uri.parse('$apiUrl?tema=$tema&page=$page'));
+      final response = await http.get(Uri.parse('$apiUrl/api/v1/libros'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        _libros = (data['libros'] as List).map((libro) => {
-          'id': libro['id'].toString(),
-          'titulo': libro['titulo'] ?? 'Sin título',
-          'autor': (libro['autores'] is List && libro['autores'].isNotEmpty) 
-              ? libro['autores'][0] 
-              : 'Autor desconocido',
-          'descripcion': libro['descripcion'] ?? 'Sin descripción',
-          'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
-          'genero': libro['genero'] ?? 'Ficción',
-          'leido': false
-        }).toList();
 
-        _error = '';
+        if (data['items'] != null) {
+          _libros = (data['items'] as List).map((libro) {
+            final volumeInfo = libro['volumeInfo'] ?? {};
+
+            return {
+              'id': libro['id'].toString(),
+              'titulo': volumeInfo['title'] ?? 'Sin título',
+              'autor': (volumeInfo['authors'] is List && volumeInfo['authors'].isNotEmpty)
+                  ? volumeInfo['authors'][0]
+                  : 'Autor desconocido',
+              'descripcion': volumeInfo['description'] ?? 'Sin descripción',
+              'urlImagen': (volumeInfo['imageLinks'] != null)
+                  ? volumeInfo['imageLinks']['thumbnail']
+                  : 'https://via.placeholder.com/150',
+              'leido': false
+            };
+          }).toList();
+
+          _error = '';
+        } else {
+          _libros = [];
+          _error = 'No hay libros disponibles.';
+        }
       } else {
         _error = 'Error ${response.statusCode}: ${response.body}';
         _libros = [];
@@ -57,19 +68,18 @@ class LibrosProvider extends ChangeNotifier {
 
   Future<Map<String, dynamic>?> getLibroById(String id) async {
     try {
-      final response = await http.get(Uri.parse('$apiUrl/$id'));
+      final response = await http.get(Uri.parse('$apiUrl/api/v1/libros/$id'));
 
       if (response.statusCode == 200) {
         final libro = json.decode(response.body);
         return {
           'id': libro['id'].toString(),
           'titulo': libro['titulo'] ?? 'Sin título',
-          'autor': (libro['autores'] is List && libro['autores'].isNotEmpty) 
-              ? libro['autores'][0] 
+          'autor': (libro['autores'] is List && libro['autores'].isNotEmpty)
+              ? libro['autores'][0]
               : 'Autor desconocido',
           'descripcion': libro['descripcion'] ?? 'Sin descripción',
           'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
-          'genero': libro['genero'] ?? 'Ficción',
           'leido': false
         };
       } else {
@@ -88,18 +98,5 @@ class LibrosProvider extends ChangeNotifier {
       _libros[index]['leido'] = leido;
       notifyListeners();
     }
-  }
-
-  List<Map<String, dynamic>> filtrarLibros({String searchTerm = '', String genero = 'Todos', bool? leido}) {
-    return _libros.where((libro) {
-      bool matchSearch = searchTerm.isEmpty ||
-          libro['titulo'].toLowerCase().contains(searchTerm.toLowerCase()) ||
-          libro['autor'].toLowerCase().contains(searchTerm.toLowerCase());
-
-      bool matchGenero = genero == 'Todos' || libro['genero'] == genero;
-      bool matchLeido = leido == null || libro['leido'] == leido;
-
-      return matchSearch && matchGenero && matchLeido;
-    }).toList();
   }
 }

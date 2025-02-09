@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_guide_2024/helpers/preferences.dart';
 import 'package:flutter_guide_2024/providers/libros_provider.dart';
 import 'package:flutter_guide_2024/providers/theme_provider.dart';
@@ -11,6 +12,7 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();  
   await Preferences.initShared();
 
   runApp(MultiProvider(

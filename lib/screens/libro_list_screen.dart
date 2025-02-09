@@ -52,7 +52,7 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
                                 setModalState(() {
                                   _searchTerm = '';
                                 });
-                                setState(() {}); // Actualizar la lista
+                                setState(() {}); 
                               },
                             )
                           : null,
@@ -64,13 +64,13 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
                       setModalState(() {
                         _searchTerm = value;
                       });
-                      setState(() {}); // Actualizar la lista en tiempo real
+                      setState(() {}); 
                     },
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      setState(() {}); // Aplicar búsqueda
+                      setState(() {}); 
                       Navigator.pop(context);
                     },
                     child: const Text('Buscar'),
