@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/news_image.dart';
-import '../helpers/date_helper.dart';
+import '../../widgets/news/news_image.dart';
+import '../../helpers/date_helper.dart';
 
 class NewsDetailScreen extends StatelessWidget {
   final Map<String, dynamic> article;

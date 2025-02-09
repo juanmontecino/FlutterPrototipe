@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/news_search_provider.dart';
-import '../widgets/news_card.dart';
-import '../providers/news_provider.dart';
-import '../screens/news_detail_screen.dart';
+import '../../providers/news_search_provider.dart';
+import '../../widgets/news/news_card.dart';
+import '../../providers/news_provider.dart';
+import 'news_detail_screen.dart';
 
 class NewsSearchScreen extends StatefulWidget {
   const NewsSearchScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/news_provider.dart';
-import '../screens/news_detail_screen.dart';
-import '../widgets/news_card.dart';
+import '../../providers/news_provider.dart';
+import 'news_detail_screen.dart';
+import '../../widgets/news/news_card.dart';
 
 class NewsListScreen extends StatefulWidget {
   const NewsListScreen({super.key});

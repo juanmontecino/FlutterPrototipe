@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/date_helper.dart';
+import '../../helpers/date_helper.dart';
 
 class NewsCard extends StatelessWidget {
   final Map<String, dynamic> article;

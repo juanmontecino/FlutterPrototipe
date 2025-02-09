@@ -106,7 +106,6 @@ class NewsProvider extends ChangeNotifier {
   String _currentTema = 'argentina';
   DateTime? _desde;
   DateTime? _hasta;
-  final int _pageSize = 50;
 
   List<NewsArticle> get news => _news;
   bool get isLoading => _isLoading;
