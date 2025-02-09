@@ -64,5 +64,21 @@ API_URL=http://localhost:3000
 - Barra de búsqueda con filtrado instantáneo
 - Búsqueda por ID (numero de la pokedex)
 
-## Agustin Santicchia (Libros Screen)
-Esta biblioteca virtual permite a los usuarios explorar, buscar y filtrar libros. La pantalla cuenta con funcionalidades como la visualización de una lista de libros, donde cada elemento muestra el título, autor e imagen de portada. Además, incluye una sección de detalles que permite ver información completa de un libro, como su descripción y una imagen de portada ampliada. Los usuarios pueden buscar libros por título o autor, aplicar filtros basados en géneros literarios y marcar los libros como leídos o no leídos. Todo esto se presenta en una interfaz moderna, atractiva y optimizada para diferentes tamaños de dispositivos.
+## 📚Agustin Santicchia (Libros Screen)
+
+*La **Biblioteca Virtual** permite a los usuarios **explorar, buscar y gestionar libros de manera intuitiva y eficiente**.*
+
+## ✨ Funcionalidades  
+
+### 🔍 **Exploración y Visualización**  
+- Muestra una lista de libros con **título, autor e imagen de portada**.  
+- Cada libro puede ser seleccionado para ver más detalles.  
+
+### 🛠 **Funciones Avanzadas**  
+- **Búsqueda inteligente** por título o autor.  
+- **Vista de detalles** con descripción completa e imagen ampliada.  
+- **Marcado de libros como leídos o no leídos** para llevar un registro de lectura.  
+
+### 🎨 **Diseño Moderno y Optimizado**  
+- Interfaz atractiva y fácil de usar.  
+- Adaptable a distintos tamaños de pantalla y dispositivos.  
