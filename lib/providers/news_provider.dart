@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class NewsSource {
   final String? id;
@@ -95,12 +95,12 @@ class NewsData {
 }
 
 class NewsProvider extends ChangeNotifier {
-  static const String _baseUrl = 'http://localhost:3000/api/v1/noticias';
-
+  String? _baseUrl;
   List<NewsArticle> _news = [];
   bool _isLoading = false;
   String _error = '';
   int _totalResults = 0;
+  bool _isInitialized = false;
 
   // Parámetros de búsqueda
   String _currentTema = 'argentina';
@@ -113,11 +113,32 @@ class NewsProvider extends ChangeNotifier {
   String get error => _error;
   int get totalResults => _totalResults;
   String get currentTema => _currentTema;
+  bool get isInitialized => _isInitialized;
 
   final http.Client _client;
 
-  NewsProvider({http.Client? client}) : _client = client ?? http.Client() {
-    loadNews();
+  NewsProvider({http.Client? client}) : _client = client ?? http.Client();
+
+  Future<void> ensureInitialized() async {
+    if (_isInitialized) return;
+
+    try {
+      // Cargar variables de entorno
+      await dotenv.load();
+      _baseUrl = dotenv.env['PATH'];
+      
+      if (_baseUrl == null) {
+        throw Exception('URL base no encontrada en .env');
+      }
+
+      // Intentar cargar noticias iniciales
+      await loadNews();
+      _isInitialized = true;
+    } catch (e) {
+      _error = 'Error de inicialización: ${e.toString()}';
+      print('Error en ensureInitialized: $_error'); // Para debugging
+      rethrow;
+    }
   }
 
   String _formatDate(DateTime? date) {
@@ -131,9 +152,12 @@ class NewsProvider extends ChangeNotifier {
     DateTime? hasta,
     int? cantidad,
   }) {
+    if (_baseUrl == null) {
+      throw Exception('Provider no inicializado');
+    }
+
     final queryParams = <String, String>{};
 
-    // Añadir parámetros solo si tienen valor
     if (tema != null && tema.isNotEmpty) {
       queryParams['tema'] = tema;
     }
@@ -146,12 +170,13 @@ class NewsProvider extends ChangeNotifier {
       queryParams['hasta'] = _formatDate(hasta);
     }
 
-    // Si se especifica cantidad, usar el endpoint específico
+    final baseEndpoint = '$_baseUrl/api/v1/noticias';
+    
     if (cantidad != null) {
-      return Uri.parse('$_baseUrl/news/$cantidad');
+      return Uri.parse('$baseEndpoint/news/$cantidad');
     }
 
-    return Uri.parse('$_baseUrl/news').replace(queryParameters: queryParams);
+    return Uri.parse('$baseEndpoint/news').replace(queryParameters: queryParams);
   }
 
   Future<void> loadNews({
@@ -160,17 +185,17 @@ class NewsProvider extends ChangeNotifier {
     DateTime? hasta,
     int? cantidad,
   }) async {
+    if (_isLoading) return;
+
     try {
       _isLoading = true;
       _error = '';
       notifyListeners();
 
-      // Actualizar el tema actual si se proporciona uno nuevo
       if (tema != null && tema.isNotEmpty) {
         _currentTema = tema;
       }
 
-      // Actualizar fechas si se proporcionan
       if (desde != null) _desde = desde;
       if (hasta != null) _hasta = hasta;
 
@@ -181,6 +206,8 @@ class NewsProvider extends ChangeNotifier {
         cantidad: cantidad,
       );
 
+      print('Requesting URL: $uri'); // Para debugging
+
       final response = await _client.get(
         uri,
         headers: {
@@ -188,21 +215,31 @@ class NewsProvider extends ChangeNotifier {
         },
       );
 
-      if (response.statusCode == 200) {
-        final NewsApiResponse apiResponse =
-            NewsApiResponse.fromJson(json.decode(response.body));
+      print('Response status: ${response.statusCode}'); // Para debugging
+      print('Response body: ${response.body}'); // Para debugging
 
-        if (apiResponse.data.status == 'ok') {
-          _news = apiResponse.data.articles;
-          _totalResults = apiResponse.data.totalResults;
+      if (response.statusCode == 200) {
+        final decodedData = json.decode(response.body);
+        
+        // Verificar la estructura de la respuesta
+        if (decodedData['data'] != null) {
+          final NewsApiResponse apiResponse = NewsApiResponse.fromJson(decodedData);
+
+          if (apiResponse.data.status == 'ok') {
+            _news = apiResponse.data.articles;
+            _totalResults = apiResponse.data.totalResults;
+          } else {
+            throw Exception('API response status is not ok');
+          }
         } else {
-          throw Exception('API response status is not ok');
+          throw Exception('Formato de respuesta inválido');
         }
       } else {
         throw Exception('Failed to load news: ${response.statusCode}');
       }
     } catch (e) {
       _error = 'Error al cargar las noticias: ${e.toString()}';
+      print('Error en loadNews: $_error'); // Para debugging
       _news = [];
     } finally {
       _isLoading = false;
@@ -216,14 +253,12 @@ class NewsProvider extends ChangeNotifier {
     await loadNews();
   }
 
-  // Método para cambiar el tema de búsqueda
   Future<void> setTema(String newTema) async {
     if (newTema != _currentTema) {
       await loadNews(tema: newTema);
     }
   }
 
-  // Método para filtrar por rango de fechas
   Future<void> setDateRange(DateTime? startDate, DateTime? endDate) async {
     await loadNews(
       desde: startDate,
@@ -231,7 +266,6 @@ class NewsProvider extends ChangeNotifier {
     );
   }
 
-  // Método para cargar una cantidad específica de noticias
   Future<void> loadSpecificAmount(int cantidad) async {
     await loadNews(cantidad: cantidad);
   }

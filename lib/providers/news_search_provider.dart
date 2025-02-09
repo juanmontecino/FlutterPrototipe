@@ -13,10 +13,13 @@ class NewsSearchProvider extends ChangeNotifier {
   String _error = '';
   
   Timer? _debounceTimer;
+  Future<void>? _initializationFuture;
   
   NewsSearchProvider({
     required this.newsProvider,
-  });
+  }) {
+    _initializationFuture = initialize();
+  }
 
   List<NewsArticle> get filteredNews => _filteredNews;
   bool get isSearching => _isSearching;
@@ -32,23 +35,30 @@ class NewsSearchProvider extends ChangeNotifier {
       _isSearching = true;
       notifyListeners();
 
-      // Esperar a que las noticias se carguen si aún no lo han hecho
+      // Asegurarse de que el NewsProvider esté inicializado
+      await newsProvider.ensureInitialized();
+
       if (newsProvider.news.isEmpty) {
         await newsProvider.loadNews();
       }
 
-      // Inicializar la lista filtrada con todas las noticias
       _filteredNews = newsProvider.news;
       _isInitialized = true;
       
-      // Suscribirse a cambios en el newsProvider
       newsProvider.addListener(_onNewsProviderUpdate);
 
     } catch (e) {
       _error = 'Error al inicializar la búsqueda: $e';
+      rethrow;
     } finally {
       _isSearching = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> ensureInitialized() async {
+    if (!_isInitialized) {
+      await _initializationFuture;
     }
   }
 
@@ -58,17 +68,20 @@ class NewsSearchProvider extends ChangeNotifier {
     }
   }
 
-  void setSearchQuery(String query) {
+  Future<void> setSearchQuery(String query) async {
+    await ensureInitialized();
     _searchQuery = query.toLowerCase();
     _debounceSearch();
   }
 
-  void setCategory(String category) {
+  Future<void> setCategory(String category) async {
+    await ensureInitialized();
     _selectedCategory = category;
     _performSearch();
   }
 
-  void toggleLatestNews() {
+  Future<void> toggleLatestNews() async {
+    await ensureInitialized();
     _onlyLatestNews = !_onlyLatestNews;
     _performSearch();
   }
@@ -81,6 +94,8 @@ class NewsSearchProvider extends ChangeNotifier {
   }
 
   void _performSearch() {
+    if (!_isInitialized) return;
+    
     try {
       _isSearching = true;
       _error = '';
@@ -88,23 +103,19 @@ class NewsSearchProvider extends ChangeNotifier {
 
       final now = DateTime.now();
       _filteredNews = newsProvider.news.where((article) {
-        // Filtrar por categoría
         if (_selectedCategory != 'Todas' && 
             article.source.name != _selectedCategory) {
           return false;
         }
 
-        // Filtrar por texto
         final matchesSearch = _searchQuery.isEmpty ||
             article.title.toLowerCase().contains(_searchQuery) ||
             article.description.toLowerCase().contains(_searchQuery);
 
-        // Filtrar por tiempo
         if (_onlyLatestNews) {
           final publishDate = DateTime.parse(article.publishedAt);
           final difference = now.difference(publishDate);
           return matchesSearch && difference.inHours <= 168;
-          
         }
 
         return matchesSearch;
