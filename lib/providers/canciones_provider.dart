@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import 'canciones_search_provider.dart';
 
 class CancionesProvider extends ChangeNotifier {
   final ApiService _apiService = ApiService();
-  
+
   List<Map<String, dynamic>> _canciones = [];
   bool _isLoading = false;
   String _error = '';

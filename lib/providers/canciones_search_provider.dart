@@ -15,7 +15,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         final List<dynamic> tracks = data['canciones'];
-        // Pasamos el género usado en la búsqueda al método de procesamiento
         return _procesarCanciones(tracks, genero ?? 'rock');
       } else {
         throw Exception('Error al obtener canciones: ${response.statusCode}');
@@ -34,7 +33,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         final List<dynamic> tracks = data['canciones'];
-        // Para este endpoint sabemos que es RKT
         return _procesarCanciones(tracks, 'RKT');
       } else {
         throw Exception('Error al obtener canciones: ${response.statusCode}');
@@ -47,10 +45,8 @@ class ApiService {
 
   List<Map<String, dynamic>> _procesarCanciones(List<dynamic> tracks, String genero) {
     return tracks.map<Map<String, dynamic>>((track) {
-      // Procesar duración
       String duracion = 'No disponible';
       if (track['duration'] != null && track['duration'] != '0') {
-        // Convertir duración de segundos a formato mm:ss
         int segundos = int.tryParse(track['duration'].toString()) ?? 0;
         if (segundos > 0) {
           int minutos = segundos ~/ 60;
@@ -69,7 +65,6 @@ class ApiService {
         }
       }
 
-      // Procesar imagen
       String imageUrl = 'https://via.placeholder.com/300';
       if (track['image'] != null && track['image'] is List) {
         final images = List<Map<String, dynamic>>.from(track['image']);
@@ -78,7 +73,6 @@ class ApiService {
         }
       }
 
-      // Procesar álbum
       String album = 'Álbum no disponible';
       if (track['album'] != null) {
         if (track['album'] is Map) {

@@ -6,6 +6,8 @@ import '../widgets/cancion_images.dart';
 import '../widgets/cancion_filtro.dart';
 
 class ListaCancionesScreen extends StatefulWidget {
+  const ListaCancionesScreen({super.key});
+
   @override
   _ListaCancionesScreenState createState() => _ListaCancionesScreenState();
 }
@@ -48,7 +50,7 @@ class _ListaCancionesScreenState extends State<ListaCancionesScreen> {
             .where((cancion) => cancion['genero'] == _generoSeleccionado)
             .toList();
 
-    final List<Widget> _paginas = [
+    final List<Widget> paginas = [
       _ListaCancionesView(
         canciones: cancionesFiltradas,
         onToggleFavorito: _toggleFavorito,
@@ -91,7 +93,7 @@ class _ListaCancionesScreenState extends State<ListaCancionesScreen> {
           ? const Center(child: CircularProgressIndicator())
           : provider.error.isNotEmpty
               ? Center(child: Text(provider.error))
-              : _paginas[_paginaSeleccionada],
+              : paginas[_paginaSeleccionada],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _paginaSeleccionada,
         onTap: (index) {
@@ -281,6 +283,7 @@ class _FavoritosView extends StatelessWidget {
                 onToggleFavorite: () => onToggleFavorito(cancion),
                 onTap: () {},
               );
+        return null;
       },
     );
   }
