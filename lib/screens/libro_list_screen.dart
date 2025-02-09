@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:diacritic/diacritic.dart';
 import '../providers/libros_provider.dart';
 import '../widgets/libro_card.dart';
 
@@ -12,19 +13,6 @@ class LibrosListScreen extends StatefulWidget {
 
 class _LibrosListScreenState extends State<LibrosListScreen> {
   String _searchTerm = '';
-  String _selectedGenre = 'Todos';
-  final List<String> _genres = [
-    'Todos', 
-    'Distopía', 
-    'Realismo mágico', 
-    'Fábula', 
-    'Drama', 
-    'Romance', 
-    'Tragedia', 
-    'Aventura', 
-    'Histórica', 
-    'Ficción contemporánea'
-  ];
 
   void _showSearchBottomSheet() {
     showModalBottomSheet(
@@ -57,6 +45,17 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
                     decoration: InputDecoration(
                       hintText: 'Buscar por título o autor',
                       prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchTerm.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                setModalState(() {
+                                  _searchTerm = '';
+                                });
+                                setState(() {}); 
+                              },
+                            )
+                          : null,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -65,37 +64,16 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
                       setModalState(() {
                         _searchTerm = value;
                       });
+                      setState(() {}); 
                     },
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Filtrar por Género',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Wrap(
-                    spacing: 8,
-                    children: _genres.map((genre) {
-                      return ChoiceChip(
-                        label: Text(genre),
-                        selected: _selectedGenre == genre,
-                        onSelected: (selected) {
-                          setModalState(() {
-                            _selectedGenre = selected ? genre : 'Todos';
-                          });
-                        },
-                      );
-                    }).toList(),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      Provider.of<LibrosProvider>(context, listen: false).cargarLibros(
-                        tema: _selectedGenre == 'Todos' ? 'ficcion' : _selectedGenre
-                      );
-                      setState(() {});
+                      setState(() {}); 
                       Navigator.pop(context);
                     },
-                    child: const Text('Aplicar Filtros'),
+                    child: const Text('Buscar'),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -105,72 +83,70 @@ class _LibrosListScreenState extends State<LibrosListScreen> {
         );
       },
     );
-  }  @override
+  }
+
+  /// **Normaliza el texto para mejorar la comparación**
+  String normalizeText(String text) {
+    return removeDiacritics(text) // Quitar acentos
+        .replaceAll(RegExp(r'[^\w\s]'), '') // Quitar caracteres especiales
+        .trim()
+        .toLowerCase();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final librosProvider = Provider.of<LibrosProvider>(context);
+
+    if (librosProvider.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (librosProvider.error.isNotEmpty) {
+      return Center(
+        child: Text(librosProvider.error),
+      );
+    }
+
+    final filteredLibros = librosProvider.libros.where((libro) {
+      final tituloNormalized = normalizeText(libro['titulo']);
+      final autorNormalized = normalizeText(libro['autor']);
+      final searchNormalized = normalizeText(_searchTerm);
+
+      return searchNormalized.isEmpty ||
+          tituloNormalized.contains(searchNormalized) ||
+          autorNormalized.contains(searchNormalized);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista De Libros'),
-      ),
-      body: Consumer<LibrosProvider>(
-        builder: (context, librosProvider, child) {
-          if (librosProvider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (librosProvider.error.isNotEmpty) {
-            return Center(
-              child: Text(librosProvider.error),
-            );
-          }
-
-          // Filtrar libros
-          final filteredLibros = librosProvider.libros.where((libro) {
-            bool matchesSearch = _searchTerm.isEmpty || 
-              libro['titulo'].toLowerCase().contains(_searchTerm.toLowerCase()) ||
-              libro['autor'].toLowerCase().contains(_searchTerm.toLowerCase());
-            
-            bool matchesGenre = _selectedGenre == 'Todos' || libro['genero'] == _selectedGenre;
-            
-            return matchesSearch && matchesGenre;
-          }).toList();
-
-          return ListView.builder(
-            itemCount: filteredLibros.length,
-            itemBuilder: (context, index) {
-              final libro = filteredLibros[index];
-              return LibroCard(
-                libro: libro,
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    'libro_detail',
-                    arguments: libro['id'],
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Libros',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Buscar',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: _showSearchBottomSheet,
           ),
         ],
-        onTap: (index) {
-          if (index == 1) {
-            _showSearchBottomSheet();
-          }
-        },
       ),
+      body: filteredLibros.isEmpty
+          ? const Center(child: Text('No se encontraron libros'))
+          : ListView.builder(
+              itemCount: filteredLibros.length,
+              itemBuilder: (context, index) {
+                final libro = filteredLibros[index];
+                return LibroCard(
+                  libro: libro,
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      'libro_detail',
+                      arguments: libro,
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }
