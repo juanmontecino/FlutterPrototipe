@@ -3,7 +3,7 @@
 ### Hecha por Agustin Santicchia, Axel Rust, Juan Cruz Montecino y Santiago Mangas
 
 Abrir el menu lateral para navegar mediante las screens de los participantes.
-Toda la informacion esta siendo mockeada.
+Toda la informacion esta siendo siendo obtenida mediante peticiones http a localhost:3000.
 
 ## Juan Cruz Montecino (News Screen)
 📱 Descripción General
