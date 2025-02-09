@@ -8,13 +8,13 @@ class CancionCard extends StatelessWidget {
   final double? width;
 
   const CancionCard({
-    Key? key,
+    super.key,
     required this.song,
     required this.isFavorite,
     required this.onToggleFavorite,
     required this.onTap,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

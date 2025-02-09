@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'cancion_card.dart';
 
 class CancionSwiper extends StatelessWidget {
   final List<Map<String, dynamic>> songs;

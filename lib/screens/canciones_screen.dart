@@ -283,6 +283,7 @@ class _FavoritosView extends StatelessWidget {
                 onToggleFavorite: () => onToggleFavorito(cancion),
                 onTap: () {},
               );
+        return null;
       },
     );
   }
