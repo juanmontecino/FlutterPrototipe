@@ -6,6 +6,8 @@ import '../widgets/cancion_images.dart';
 import '../widgets/cancion_filtro.dart';
 
 class ListaCancionesScreen extends StatefulWidget {
+  const ListaCancionesScreen({super.key});
+
   @override
   _ListaCancionesScreenState createState() => _ListaCancionesScreenState();
 }
@@ -48,7 +50,7 @@ class _ListaCancionesScreenState extends State<ListaCancionesScreen> {
             .where((cancion) => cancion['genero'] == _generoSeleccionado)
             .toList();
 
-    final List<Widget> _paginas = [
+    final List<Widget> paginas = [
       _ListaCancionesView(
         canciones: cancionesFiltradas,
         onToggleFavorito: _toggleFavorito,
@@ -91,7 +93,7 @@ class _ListaCancionesScreenState extends State<ListaCancionesScreen> {
           ? const Center(child: CircularProgressIndicator())
           : provider.error.isNotEmpty
               ? Center(child: Text(provider.error))
-              : _paginas[_paginaSeleccionada],
+              : paginas[_paginaSeleccionada],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _paginaSeleccionada,
         onTap: (index) {
@@ -280,7 +282,6 @@ class _FavoritosView extends StatelessWidget {
           isFavorite: true,
           onToggleFavorite: () => onToggleFavorito(cancion),
           onTap: () => onTapCancion(cancion),
-          showDetails: true,
         );
       },
     );
@@ -308,32 +309,43 @@ class _FiltroGeneroView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final generos = canciones.map((cancion) => cancion['genero'] as String).toSet().toList();
+    final provider = Provider.of<CancionesProvider>(context);
 
     return Column(
       children: [
         const SizedBox(height: 16),
         FiltroGenero(
-          genres: generos,
-          selectedGenre: generoSeleccionado,
-          onGenreSelected: onGeneroSeleccionado,
+          genres: provider.generos,
+          selectedGenre: provider.generoActual,
+          onGenreSelected: (genero) {
+            if (genero == null) {
+              provider.cargarCanciones(genero: 'rock');
+            } else {
+              provider.cambiarGenero(genero);
+            }
+          },
         ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: ListView.builder(
-            itemCount: cancionesFiltradas.length,
-            itemBuilder: (context, index) {
-              final cancion = cancionesFiltradas[index];
-              return CancionCard(
+        if (provider.isLoading)
+          const Center(child: CircularProgressIndicator())
+        else if (provider.error.isNotEmpty)
+          Center(child: Text(provider.error))
+        else if (cancionesFiltradas.isEmpty)
+          const Center(child: Text('No hay canciones para este género'))
+        else
+          Expanded(
+            child: ListView.builder(
+              itemCount: cancionesFiltradas.length,
+              itemBuilder: (context, index) {
+                final cancion = cancionesFiltradas[index];
+                return CancionCard(
                 song: cancion,
                 isFavorite: favoritos.contains(cancion),
                 onToggleFavorite: () => onToggleFavorito(cancion),
                 onTap: () => onTapCancion(cancion),
-                showDetails: true,
               );
-            },
+              },
+            ),
           ),
-        ),
       ],
     );
   }

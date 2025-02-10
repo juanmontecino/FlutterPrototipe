@@ -4,7 +4,7 @@ class DrawerMenu extends StatelessWidget {
   final List<Map<String, String>> _menuItems = <Map<String, String>>[
     {'route': 'home', 'title': 'Home', 'subtitle': ''},
     {'route': 'profile', 'title': 'Perfil usuario', 'subtitle': ''},
-    {'route': 'news', 'title': 'Montecino', 'subtitle': 'Noticias'},
+    {'route': 'provider_navigation_bar_provider', 'title': 'Montecino', 'subtitle': 'Noticias'},
     {'route': 'pokemon_list', 'title': 'Mangas', 'subtitle': 'Lista de Pokémon'},
     {'route': 'libros_list', 'title': 'Santicchia', 'subtitle': 'Lista de libros'},
     {'route': 'canciones_lista', 'title': 'Rust', 'subtitle': 'Canciones'}, // Nueva sección Rust
@@ -48,9 +48,7 @@ class DrawerMenu extends StatelessWidget {
 }
 
 class _DrawerHeaderAlternative extends StatelessWidget {
-  const _DrawerHeaderAlternative({
-    Key? key,
-  }) : super(key: key);
+  const _DrawerHeaderAlternative();
 
   @override
   Widget build(BuildContext context) {

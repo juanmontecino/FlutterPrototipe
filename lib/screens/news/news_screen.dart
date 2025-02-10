@@ -1,8 +1,8 @@
 // lib/screens/news_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/navigation_provider.dart';
-import '../screens/news_listview_builder.dart';
+import '../../providers/navigation_provider.dart';
+import 'news_listview_builder.dart';
 import 'news_search.dart';
 
 class NewsScreen extends StatelessWidget {

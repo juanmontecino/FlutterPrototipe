@@ -1,53 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/libros_provider.dart';
-import '../widgets/libros_cover_image.dart';
 
 class LibroDetailScreen extends StatelessWidget {
   const LibroDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final libroId = ModalRoute.of(context)!.settings.arguments as String;
-    final libro = Provider.of<LibrosProvider>(context).getLibroById(libroId);
-
-    if (libro == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Error'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline, 
-                size: 100, 
-                color: Colors.red
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Libro no encontrado',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.red
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'El libro solicitado no existe en la biblioteca.',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Volver'),
-              )
-            ],
-          ),
-        ),
-      );
-    }
+    final Map<String, dynamic> libro =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
 
     return Scaffold(
       appBar: AppBar(
@@ -60,10 +19,13 @@ class LibroDetailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: LibroCoverImage(
-                  imageUrl: libro['urlImagen'],
+                child: Image.network(
+                  libro['urlImagen'],
                   height: 300,
                   width: 200,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.broken_image, size: 150);
+                  },
                 ),
               ),
               const SizedBox(height: 24),
@@ -73,10 +35,10 @@ class LibroDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                libro['autor'],
+                'Autor: ${libro['autor']}',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                      color: Colors.grey[600],
+                    ),
               ),
               const SizedBox(height: 16),
               Text(

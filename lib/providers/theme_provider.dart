@@ -15,7 +15,7 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   setDark() {
-    print('setLight');
+    print('setDark');
     temaActual = DefaultTheme.darkTheme;
     notifyListeners();
   }

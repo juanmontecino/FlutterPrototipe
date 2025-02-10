@@ -36,8 +36,8 @@ class BodyProfile extends StatelessWidget {
   bool darkMode = false;
 
   BodyProfile({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,9 +126,9 @@ class BodyProfile extends StatelessWidget {
 
 class HeaderProfile extends StatelessWidget {
   const HeaderProfile({
-    Key? key,
+    super.key,
     required this.size,
-  }) : super(key: key);
+  });
 
   final Size size;
 

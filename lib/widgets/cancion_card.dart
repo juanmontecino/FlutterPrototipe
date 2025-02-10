@@ -6,24 +6,22 @@ class CancionCard extends StatelessWidget {
   final VoidCallback onToggleFavorite;
   final VoidCallback onTap;
   final double? width;
-  final bool showDetails;
 
   const CancionCard({
-    Key? key,
+    super.key,
     required this.song,
     required this.isFavorite,
     required this.onToggleFavorite,
     required this.onTap,
     this.width,
-    this.showDetails = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(8),
-      child: Container(
+      child: SizedBox(
         width: width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,6 +35,14 @@ class CancionCard extends StatelessWidget {
                   width: double.infinity,
                   height: 200,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.music_note, size: 50),
+                    );
+                  },
                 ),
                 IconButton(
                   icon: Icon(
@@ -48,37 +54,30 @@ class CancionCard extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     song['titulo'],
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     song['artista'],
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  if (showDetails) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      'Género: ${song['genero']}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    Text(
-                      'Duración: ${song['duracion']}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
+                  const SizedBox(height: 4),
+                  Text(
+                    'Género: ${song['genero']}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
-            ),
-            TextButton(
-              onPressed: onTap,
-              child: const Text('Ver detalles'),
             ),
           ],
         ),

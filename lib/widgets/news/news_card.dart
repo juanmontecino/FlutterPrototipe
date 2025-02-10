@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/date_helper.dart';
+import '../../helpers/date_helper.dart';
 
 class NewsCard extends StatelessWidget {
   final Map<String, dynamic> article;
@@ -42,15 +42,38 @@ class NewsCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
+    final imageUrl = article['imageUrl'] as String?;
+    
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return _buildPlaceholderImage();
+    }
+
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: Image.network(
-          article['imageUrl'] as String,
+          imageUrl,
           fit: BoxFit.cover,
           loadingBuilder: _loadingBuilder,
-          errorBuilder: _errorBuilder,
+          errorBuilder: (_, __, ___) => _buildPlaceholderImage(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.image_not_supported_outlined,
+          size: 48,
+          color: Colors.grey[600],
         ),
       ),
     );
