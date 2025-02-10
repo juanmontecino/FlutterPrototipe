@@ -15,6 +15,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   await Preferences.initShared();
   await dotenv.load(fileName: ".env");
   runApp(MultiProvider(
@@ -23,7 +24,7 @@ Future<void> main() async {
         create: (_) => ThemeProvider(isDarkMode: Preferences.darkmode),
       ),
       ChangeNotifierProvider<PokemonProvider>(
-        create: (_) => PokemonProvider(), 
+        create: (_) => PokemonProvider(),
         lazy: false,
       ),
 
