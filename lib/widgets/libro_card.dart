@@ -1,4 +1,3 @@
-// libro_card.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/libros_cover_image.dart';
@@ -52,23 +51,6 @@ class LibroCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                     Checkbox(
-                      value: libro['leido'] ?? false,
-                      onChanged: (bool? newValue) {
-                        librosProvider.marcarLibroComoLeido(libro['id'], newValue ?? false);
-                      },
-                    ),
-                      Text(
-                        'Leído',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
