@@ -15,7 +15,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
   await Preferences.initShared();
   await dotenv.load(fileName: ".env");
   runApp(MultiProvider(
@@ -69,8 +68,8 @@ class MyApp extends StatelessWidget {
         'canciones_detalle': (context) => DetalleCancionScreen(),
         'libros_list': (context) => const LibrosListScreen(),
         'libro_detail': (context) => const LibroDetailScreen(),
-        
-        'provider_navigation_bar_provider': (context) => NewsScreen(),
+
+        'provider_navigation_bar_provider': (context) => const NewsScreen(),
         'search': (context) => const NewsSearchScreen(),
       },
     );
