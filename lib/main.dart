@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();  
+  await dotenv.load(fileName: ".env");
   await Preferences.initShared();
 
   runApp(MultiProvider(

@@ -1,101 +1,67 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class LibrosProvider extends ChangeNotifier {
+class LibrosProvider with ChangeNotifier {
   List<Map<String, dynamic>> _libros = [];
-  bool _isLoading = false;
   String _error = '';
+  bool _isLoading = false;
+
+  // URL directa como fallback
+  final String apiUrl = dotenv.env['PATH'] ?? "http://localhost:3000/api/v1/libros";
 
   List<Map<String, dynamic>> get libros => _libros;
-  bool get isLoading => _isLoading;
   String get error => _error;
-
-  LibrosProvider() {
-    cargarLibros();
-  }
-
-  String get apiUrl {
-    return dotenv.env['PATH'] ?? 'http://localhost:3000';
-  }
+  bool get isLoading => _isLoading;
 
   Future<void> cargarLibros() async {
     try {
       _isLoading = true;
+      _error = '';
       notifyListeners();
 
-      final response = await http.get(Uri.parse('$apiUrl/api/v1/libros'));
+      debugPrint('📚 Cargando libros desde: $apiUrl');
+      
+      final response = await http.get(Uri.parse(apiUrl));
+      
+      debugPrint('📝 Status code: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        debugPrint('✅ Datos recibidos correctamente');
 
-        if (data['items'] != null) {
-          _libros = (data['items'] as List).map((libro) {
-            final volumeInfo = libro['volumeInfo'] ?? {};
-
+        if (data['libros'] != null && data['libros'] is List) {
+          _libros = (data['libros'] as List).map((libro) {
             return {
-              'id': libro['id'].toString(),
-              'titulo': volumeInfo['title'] ?? 'Sin título',
-              'autor': (volumeInfo['authors'] is List && volumeInfo['authors'].isNotEmpty)
-                  ? volumeInfo['authors'][0]
+              'id': libro['id']?.toString() ?? '0',
+              'titulo': libro['titulo'] ?? 'Sin título',
+              'autor': (libro['autores'] is List && libro['autores'].isNotEmpty)
+                  ? libro['autores'][0]
                   : 'Autor desconocido',
-              'descripcion': volumeInfo['description'] ?? 'Sin descripción',
-              'urlImagen': (volumeInfo['imageLinks'] != null)
-                  ? volumeInfo['imageLinks']['thumbnail']
-                  : 'https://via.placeholder.com/150',
-              'leido': false
+              'descripcion': libro['descripcion'] ?? 'Sin descripción',
+              'urlImagen': libro['imagenPortada']?.replaceFirst('http:', 'https:') ?? 
+                  'https://via.placeholder.com/150',
             };
           }).toList();
-
-          _error = '';
+          
+          debugPrint('📚 Libros cargados: ${_libros.length}');
         } else {
           _libros = [];
-          _error = 'No hay libros disponibles.';
+          _error = 'No se encontraron libros en la respuesta.';
+          debugPrint('⚠️ No se encontraron libros en la respuesta');
         }
       } else {
-        _error = 'Error ${response.statusCode}: ${response.body}';
+        _error = 'Error ${response.statusCode}: ${response.reasonPhrase}';
         _libros = [];
+        debugPrint('❌ Error HTTP: ${response.statusCode}');
       }
     } catch (e) {
+      debugPrint('❌ Error: $e');
       _error = 'Error de conexión: $e';
       _libros = [];
     } finally {
       _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<Map<String, dynamic>?> getLibroById(String id) async {
-    try {
-      final response = await http.get(Uri.parse('$apiUrl/api/v1/libros/$id'));
-
-      if (response.statusCode == 200) {
-        final libro = json.decode(response.body);
-        return {
-          'id': libro['id'].toString(),
-          'titulo': libro['titulo'] ?? 'Sin título',
-          'autor': (libro['autores'] is List && libro['autores'].isNotEmpty)
-              ? libro['autores'][0]
-              : 'Autor desconocido',
-          'descripcion': libro['descripcion'] ?? 'Sin descripción',
-          'urlImagen': libro['imagenPortada'] ?? 'https://via.placeholder.com/150',
-          'leido': false
-        };
-      } else {
-        print('Error al obtener libro: ${response.statusCode} - ${response.body}');
-        return null;
-      }
-    } catch (e) {
-      print('Error de conexión: $e');
-      return null;
-    }
-  }
-
-  void marcarLibroComoLeido(String id, bool leido) {
-    final index = _libros.indexWhere((libro) => libro['id'] == id);
-    if (index != -1) {
-      _libros[index]['leido'] = leido;
       notifyListeners();
     }
   }
