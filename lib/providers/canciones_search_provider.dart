@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:3000/api/v1';
+  late String baseUrl;
+
+  ApiService() {
+    baseUrl = '${dotenv.env['PATH']}/api/v1';
+  }
 
   Future<List<Map<String, dynamic>>> getCanciones({String? genero}) async {
     try {
@@ -42,7 +47,6 @@ class ApiService {
     }
   }
 
-
   List<Map<String, dynamic>> _procesarCanciones(List<dynamic> tracks, String genero) {
     return tracks.map<Map<String, dynamic>>((track) {
       String duracion = 'No disponible';
@@ -55,7 +59,6 @@ class ApiService {
         }
       }
 
-      // Procesar artista
       String artista = 'Artista desconocido';
       if (track['artist'] != null) {
         if (track['artist'] is Map) {

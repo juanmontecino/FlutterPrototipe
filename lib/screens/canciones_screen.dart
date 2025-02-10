@@ -277,13 +277,12 @@ class _FavoritosView extends StatelessWidget {
       itemCount: favoritos.length,
       itemBuilder: (context, index) {
         final cancion = favoritos[index];
-        CancionCard(
-                song: cancion,
-                isFavorite: true,
-                onToggleFavorite: () => onToggleFavorito(cancion),
-                onTap: () {},
-              );
-        return null;
+        return CancionCard(
+          song: cancion,
+          isFavorite: true,
+          onToggleFavorite: () => onToggleFavorito(cancion),
+          onTap: () => onTapCancion(cancion),
+        );
       },
     );
   }
