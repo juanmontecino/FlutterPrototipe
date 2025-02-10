@@ -7,6 +7,7 @@ import 'package:flutter_guide_2024/providers/theme_provider.dart';
 import 'package:flutter_guide_2024/providers/canciones_provider.dart'; // Importa el nuevo provider
 import 'package:flutter_guide_2024/screens/libro_detail_screen.dart';
 import 'package:flutter_guide_2024/screens/libro_list_screen.dart';
+import 'package:flutter_guide_2024/providers/news_provider.dart';
 import 'package:flutter_guide_2024/providers/news_search_provider.dart'; // Nuevo import
 import 'package:flutter_guide_2024/screens/screens.dart';
 import 'package:provider/provider.dart';
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
         'canciones_detalle': (context) => DetalleCancionScreen(),
         'libros_list': (context) => const LibrosListScreen(),
         'libro_detail': (context) => const LibroDetailScreen(),
+        
         'provider_navigation_bar_provider': (context) => NewsScreen(),
         'search': (context) => const NewsSearchScreen(),
       },
