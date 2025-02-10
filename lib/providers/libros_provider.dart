@@ -9,7 +9,10 @@ class LibrosProvider with ChangeNotifier {
   bool _isLoading = false;
 
   // URL directa como fallback
-  final String apiUrl = dotenv.env['PATH'] ?? "http://localhost:3000/api/v1/libros";
+  // Construir la URL base desde la variable de entorno
+  String get baseUrl => dotenv.env['PATH'] ?? 'http://localhost:3000';
+  // Construir la URL completa para la API
+  String get apiUrl => '$baseUrl/api/v1/libros';
 
   List<Map<String, dynamic>> get libros => _libros;
   String get error => _error;
