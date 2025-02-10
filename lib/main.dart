@@ -4,19 +4,19 @@ import 'package:flutter_guide_2024/helpers/preferences.dart';
 import 'package:flutter_guide_2024/providers/pokemon_provider.dart';
 import 'package:flutter_guide_2024/providers/libros_provider.dart';
 import 'package:flutter_guide_2024/providers/theme_provider.dart';
-import 'package:flutter_guide_2024/providers/news_provider.dart';
 import 'package:flutter_guide_2024/providers/canciones_provider.dart'; // Importa el nuevo provider
 import 'package:flutter_guide_2024/screens/libro_detail_screen.dart';
 import 'package:flutter_guide_2024/screens/libro_list_screen.dart';
 import 'package:flutter_guide_2024/providers/news_search_provider.dart'; // Nuevo import
 import 'package:flutter_guide_2024/screens/screens.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Preferences.initShared();
-
+  await dotenv.load(fileName: ".env");
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<ThemeProvider>(
@@ -61,7 +61,6 @@ class MyApp extends StatelessWidget {
       theme: tema.temaActual,
       routes: {
         'home': (context) => const HomeScreen(),
-        'news': (context) => NewsScreen(),
         'profile': (context) => ProfileScreen(),
         'pokemon_list': (context) => ListadoScreen(),
         'pokemon_detail': (context) => PokemonDetailScreen(),
