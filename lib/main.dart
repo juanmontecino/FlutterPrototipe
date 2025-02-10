@@ -69,7 +69,6 @@ class MyApp extends StatelessWidget {
         'canciones_detalle': (context) => DetalleCancionScreen(),
         'libros_list': (context) => const LibrosListScreen(),
         'libro_detail': (context) => const LibroDetailScreen(),
-
         'provider_navigation_bar_provider': (context) => const NewsScreen(),
         'search': (context) => const NewsSearchScreen(),
       },
